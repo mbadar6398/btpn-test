@@ -1,0 +1,10 @@
+.page {
+  &__container {
+    height: 100%;
+    display: flex;
+  }
+  &__content {
+    height: calc(100% - 75px);
+    width: calc(100% - 280px);
+  }
+}
