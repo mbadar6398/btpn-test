@@ -6,13 +6,13 @@
           <div class="card-header align-items-center border-0 pt-5">
             <h3 class="card-title align-items-start flex-column">
               <span class="card-label font-weight-bolder text-primary">
-                {{ loading ? 'Loading...' : 'Template Settings' }}
+                {{ loading ? 'Loading...' : 'SMTP SETTINGS' }}
               </span>
               <span class="text-dark-50 mt-2 font-weight-bold font-size-sm">
                 {{
                   loading
                     ? 'Fetching data...'
-                    : 'Fill form below to update template '
+                    : 'Fill form below to update smpt settings'
                 }}
               </span>
             </h3>
@@ -43,26 +43,48 @@
           <div class="card-body">
             <form action="" v-if="!loading">
               <div class="row">
-                <div class="col-12">
+                <div class="col-6">
                   <div class="form-group">
-                    <label class="font-weight-bolder" for="">Header</label>
-                    <prism-editor
-                      class="my-editor"
-                      v-model="dataToPost.template_header"
-                      :highlight="highlighter"
-                      line-numbers
-                    ></prism-editor>
+                    <label for="" class="font-weight-bolder">SMTP Host</label>
+                    <input
+                      v-model="dataToPost.smtp_host"
+                      type="text"
+                      class="form-control form-control-solid"
+                    />
                   </div>
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                   <div class="form-group">
-                    <label class="font-weight-bolder" for="">Footer</label>
-                    <prism-editor
-                      class="my-editor"
-                      v-model="dataToPost.template_footer"
-                      :highlight="highlighter"
-                      line-numbers
-                    ></prism-editor>
+                    <label for="" class="font-weight-bolder">SMTP Port</label>
+                    <input
+                      v-model="dataToPost.smtp_port"
+                      type="text"
+                      class="form-control form-control-solid"
+                    />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="" class="font-weight-bolder">
+                      SMTP Username
+                    </label>
+                    <input
+                      v-model="dataToPost.smtp_user"
+                      type="text"
+                      class="form-control form-control-solid"
+                    />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="" class="font-weight-bolder">
+                      SMTP Password
+                    </label>
+                    <input
+                      v-model="dataToPost.smtp_password"
+                      type="text"
+                      class="form-control form-control-solid"
+                    />
                   </div>
                 </div>
               </div>
@@ -76,23 +98,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-// import Prism Editor
-import { PrismEditor } from 'vue-prism-editor';
-import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
-
-// import highlighting library (you can use any library you want just return html string)
-import { highlight, languages } from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-markup-templating.js';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 import UploadInput from '@/components/UploadInput/UploadInput.vue';
 import axios from 'axios';
 @Component({
-  components: { UploadInput, PrismEditor },
+  components: { UploadInput },
   computed: {}
 })
-export default class TemplateSettings extends Vue {
+export default class GeneralSettings extends Vue {
   loading = false;
   loading_submit = false;
   dataToPost = {};
@@ -113,33 +125,5 @@ export default class TemplateSettings extends Vue {
       this.loading_submit = false;
     }
   }
-
-  highlighter(code: any) {
-    return highlight(code, languages.js);
-  }
 }
 </script>
-
-<style>
-.my-editor {
-  /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
-  background: #2d2d2d;
-  color: #ccc;
-  height: 200px;
-
-  /* you must provide font-family font-size line-height. Example:*/
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-}
-
-/* optional class for removing the outline */
-.prism-editor__textarea:focus {
-  outline: none;
-}
-
-.prism-editor__editor {
-  color: #ffffff;
-}
-</style>

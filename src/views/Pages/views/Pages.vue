@@ -1,17 +1,20 @@
 <template>
   <div class="container">
-    <Panel title="Pages" subtitle="Below is list of pages on your website">
+    <Panel
+      title="Halaman"
+      subtitle="Dibawah ini adalah daftar halaman yang ada pada website"
+    >
       <template v-slot:toolbar>
         <b-button variant="success" class="mr-4" size="sm" v-b-modal.modal-add>
           <span class="d-flex align-items-center font-weight-bolder">
             <i class="fas fa-plus mb-0 mr-1"></i>
-            New Page
+            Halaman baru
           </span>
         </b-button>
         <b-button variant="primary" size="sm" v-b-modal.modal-filter>
           <span class="d-flex align-items-center font-weight-bolder">
             <i class="fas fa-filter mb-0 mr-1"></i>
-            Filter Data
+            Filter halaman
           </span>
         </b-button>
       </template>
@@ -20,28 +23,42 @@
         <table class="table table-striped">
           <thead class="bg-dark text-white">
             <tr>
-              <th>Name</th>
-              <th>Type</th>
+              <th>Nama</th>
+              <th>Jenis</th>
               <th>Slug</th>
-              <th>Visibility</th>
-              <th class="text-center">Actions</th>
+              <th>Status</th>
+              <th class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody v-if="fetchLoading">
             <tr>
-              <td colspan="5" class="text-center">Loading...</td>
+              <td colspan="5" class="text-center">Memuat...</td>
             </tr>
           </tbody>
           <tbody v-else-if="fetchFailed">
             <tr>
               <td colspan="5" class="text-center">
-                Failed fetching data, please
+                Gagal mendapatkan data
                 <span
                   @click="fetchData"
                   class="cursor-pointer text-danger font-weight-bolder"
                 >
-                  retry
+                  coba lagi
                 </span>
+              </td>
+            </tr>
+          </tbody>
+          <tbody
+            v-else-if="
+              !fetchFailed &&
+                !fetchFailed &&
+                !fetchLoading &&
+                pages.length === 0
+            "
+          >
+            <tr>
+              <td colspan="5" class="text-center">
+                Data tidak ditemukan
               </td>
             </tr>
           </tbody>
@@ -75,8 +92,8 @@
                   <i class="fa fa-eye text-success"></i>
                 </router-link>
                 <button
+                  :disabled="deleteLoading"
                   @click="deletePage(item.id)"
-                  :disabled="item.type === 'Template'"
                   class="btn btn-transparent text-danger btn-sm p-0"
                 >
                   <i class="fa fa-trash-alt text-danger"></i>
@@ -85,8 +102,7 @@
             </tr>
           </tbody>
         </table>
-        <div class="d-flex align-items-center justify-content-between">
-          <p class="mb-0 font-weight-bolder">Total data : {{ total_rows }}</p>
+        <div class="d-flex align-items-center justify-content-center">
           <!-- Pagination -->
           <b-pagination
             @change="onPageChange"
@@ -120,6 +136,7 @@ export default class Pages extends Vue {
   total_rows = 0;
   fetchLoading = false;
   fetchFailed = false;
+  deleteLoading = false;
 
   filter: any = {
     page: 1,
@@ -137,7 +154,7 @@ export default class Pages extends Vue {
       this.fetchLoading = true;
       this.fetchFailed = false;
       const queryString = new URLSearchParams(this.filter).toString();
-      const { data } = await axios.get('pages?' + queryString);
+      const { data } = await axios.get('page/get?' + queryString);
       this.pages = data.data.data;
       this.total_rows = data.data.pagination.total_rows;
       this.fetchLoading = false;
@@ -158,8 +175,14 @@ export default class Pages extends Vue {
       denyButtonText: `Cancel`
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await axios.delete('/page/delete/' + id);
-        this.fetchData();
+        try {
+          this.deleteLoading = true;
+          await axios.delete('/page/delete/' + id);
+          this.deleteLoading = false;
+          this.fetchData();
+        } catch (error) {
+          this.deleteLoading = false;
+        }
       }
     });
   }

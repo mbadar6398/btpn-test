@@ -133,7 +133,7 @@ export default class AddItem extends Vue {
   async onModalShown() {
     try {
       this.loading_fetch = true;
-      const { data } = await axios.get('pages?limit=1000&page=1');
+      const { data } = await axios.get('page/get?limit=1000&page=1');
       this.pages = data.data.data;
       this.loading_fetch = false;
     } catch (error) {

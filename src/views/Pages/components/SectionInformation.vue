@@ -4,58 +4,18 @@
       <template v-slot:toolbar>
         <router-link to="/pages" class="btn btn-secondary btn-sm mr-4">
           <span class="d-flex align-items-center font-weight-bolder">
-            <i class="fa fa-list font-size-sm mb-0 mr-1"></i>
-            Pages List
+            <i class="fa fa-arrow-left font-size-sm mb-0 mr-1"></i>
+            Kembali
           </span>
         </router-link>
         <button
-          class="btn btn-warning btn-sm mr-4"
-          v-b-modal.modal-section-configuration
-          :disabled="fetchLoading"
-        >
-          <span class="d-flex align-items-center font-weight-bolder text-dark">
-            <i class="fa fa-cog font-size-sm mb-0 mr-1 text-dark"></i>
-          </span>
-        </button>
-        <button
-          class="btn btn-danger btn-sm mr-4"
-          @click="deleteSection(selected_section)"
-          :disabled="fetchLoading"
-        >
-          <span class="d-flex align-items-center font-weight-bolder">
-            <i class="fa fa-trash-alt font-size-sm mb-0 mr-1"></i>
-          </span>
-        </button>
-        <button
-          class="btn btn-primary btn-sm mr-4"
-          v-b-modal.modal-section-configuration
-          :disabled="fetchLoading || Number(dataToPost.order_seq) === 1"
-          @click="increaseSection(selected_section)"
-        >
-          <span class="d-flex align-items-center font-weight-bolder">
-            <i class="fa fa-chevron-up"></i>
-          </span>
-        </button>
-        <button
-          class="btn btn-primary btn-sm mr-4"
-          v-b-modal.modal-section-configuration
-          @click="decreaseSection(selected_section)"
-          :disabled="
-            fetchLoading || Number(dataToPost.order_seq) === total_sections
-          "
-        >
-          <span class="d-flex align-items-center font-weight-bolder">
-            <i class="fa fa-chevron-down"></i>
-          </span>
-        </button>
-        <button
-          class="btn btn-success btn-sm"
+          class="btn btn-success btn-sm font-weight-bolder"
           @click="saveChanges"
           :disabled="fetchLoading || saveLoading"
         >
           <div v-if="!saveLoading">
             <i class="fa fa-save"></i>
-            Save changes
+            Simpan Perubahan
           </div>
 
           <div class="d-flex align-items-center justify-content-center" v-else>
@@ -65,6 +25,48 @@
             <span class="ml-2">Loading...</span>
           </div>
         </button>
+        <b-dropdown
+          v-if="pageType !== 'Custom'"
+          :disabled="fetchLoading"
+          variant="primary"
+          class="ml-4"
+          size="sm"
+        >
+          <template #button-content>
+            <i class="fa fa-cog font-size-sm mb-0"></i>
+            <span>Pengaturan</span>
+          </template>
+          <b-dropdown-item v-b-modal.modal-section-configuration>
+            <span class="d-flex align-items-center">
+              <i class="fa fa-cog mr-2 text-warning mb-0"></i>
+              Pengaturan Section
+            </span>
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-if="Number(dataToPost.order_seq) !== 1"
+            @click="increaseSection(selected_section)"
+          >
+            <span class="d-flex align-items-center">
+              <i class="fa fa-chevron-up text-primary mr-2 mb-0"></i>
+              Pindahkan keatas
+            </span>
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-if="Number(dataToPost.order_seq) !== total_sections"
+            @click="decreaseSection(selected_section)"
+          >
+            <span class="d-flex align-items-center">
+              <i class="fa fa-chevron-down text-primary mr-2 mb-0"></i>
+              Pindahkan kebawah
+            </span>
+          </b-dropdown-item>
+          <b-dropdown-item @click="deleteSection(selected_section)">
+            <span class="d-flex align-items-center">
+              <i class="fa fa-trash-alt text-danger mr-2 mb-0"></i>
+              Delete Section
+            </span>
+          </b-dropdown-item>
+        </b-dropdown>
       </template>
 
       <template v-slot:body v-if="!fetchLoading">
@@ -165,19 +167,7 @@
                 <Editor
                   api-key="quq8vd89bv5ivyw082b8g49x7iuu6uh0h85p8deb4mdplqpa"
                   v-model="dataToPost.content"
-                  :init="{
-                    height: 500,
-                    menubar: false,
-                    plugins: [
-                      'textcolor advlist autolink lists link image charmap print preview anchor',
-                      'searchreplace visualblocks code fullscreen',
-                      'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar:
-                      'forecolor backcolor | undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help'
-                  }"
+                  :init="tinyMceConfig"
                 />
               </div>
             </div>
@@ -256,7 +246,7 @@
                 />
                 <img
                   v-if="dataToPost.image"
-                  class="img-fluid"
+                  class="img-fluid mt-4"
                   :src="dataToPost.image"
                   style="max-height: 240px;"
                   alt=""
@@ -283,7 +273,7 @@
                 />
                 <img
                   v-if="dataToPost.image_mobile"
-                  class="img-fluid"
+                  class="img-fluid mt-4"
                   :src="dataToPost.image_mobile"
                   style="max-height: 240px;"
                   alt=""
@@ -312,7 +302,7 @@
                 />
                 <img
                   v-if="dataToPost.background"
-                  class="img-fluid"
+                  class="img-fluid mt-4"
                   :src="dataToPost.background"
                   style="max-height: 240px;"
                   alt=""
@@ -341,7 +331,7 @@
                 />
                 <img
                   v-if="dataToPost.background_mobile"
-                  class="img-fluid"
+                  class="img-fluid mt-4"
                   :src="dataToPost.background_mobile"
                   style="max-height: 240px;"
                   alt=""
@@ -393,6 +383,7 @@ import Editor from '@tinymce/tinymce-vue';
 export default class SectionInformation extends Vue {
   @Prop(String) readonly selected_section!: string;
   @Prop(String) readonly pageId!: string;
+  @Prop(String) readonly pageType!: string;
   dataToPost: any = {};
   fetchLoading = true;
   total_sections = 0;
@@ -402,6 +393,28 @@ export default class SectionInformation extends Vue {
     section_card_configuration: MainConfig.section_card_configuration
   };
 
+  tinyMceConfig = {
+    selector: 'textarea#open-source-plugins',
+    plugins:
+      'preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
+    imagetools_cors_hosts: ['picsum.photos'],
+    menubar: 'file edit view insert format tools table help',
+    toolbar:
+      'undo redo | quickimage | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+    toolbar_sticky: false,
+    image_advtab: true,
+    importcss_append: true,
+    height: 500,
+    image_caption: true,
+    quickbars_selection_toolbar:
+      'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+    noneditable_noneditable_class: 'mceNonEditable',
+    toolbar_mode: 'sliding',
+    contextmenu: 'link image imagetools table',
+    content_style:
+      'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+  };
+
   @Watch('selected_section', { immediate: false, deep: false })
   async onSelectedSectionChanged() {
     this.getSectionsDetail();
@@ -409,9 +422,9 @@ export default class SectionInformation extends Vue {
 
   get panelTitle() {
     if (!this.selected_section) {
-      return 'Please select section';
+      return 'Harap memilih section';
     } else {
-      return this.fetchLoading ? 'Loading...' : this.dataToPost.name;
+      return this.fetchLoading ? 'Memuat...' : this.dataToPost.name;
     }
   }
 

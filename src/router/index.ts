@@ -6,6 +6,8 @@ import Posts from '../views/Posts/pages/Posts.vue';
 import PostsCreate from '../views/Posts/pages/PostsCreate.vue';
 import PostsDetail from '../views/Posts/pages/PostsDetail.vue';
 import GeneralSettings from '../views/Settings/pages/General.vue';
+import SmtpSettings from '../views/Settings/pages/Smtp.vue';
+import TemplateSettings from '../views/Settings/pages/Template.vue';
 import PasswordSettings from '../views/Settings/pages/Password.vue';
 import SocialMediaSettings from '../views/Settings/pages/SocialMedia.vue';
 
@@ -102,6 +104,18 @@ const routes: Array<RouteConfig> = [
     path: '/settings/general',
     name: 'general-settings',
     component: GeneralSettings,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/settings/smtp',
+    name: 'smtp-settings',
+    component: SmtpSettings,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/settings/template',
+    name: 'smtp-template',
+    component: TemplateSettings,
     beforeEnter: isAuthenticated
   },
   {

@@ -4,7 +4,7 @@
       <div class="sidebar__brand flex-column">
         <img
           class="img-fluid"
-          src="/media/logo/logo.png"
+          :src="settings.logo_white"
           style="height: 62px;"
           alt=""
         />
@@ -168,22 +168,22 @@ export default class Sidebar extends Vue {
       has_child: false,
       children: []
     },
-    {
-      name: 'Members',
-      slug: 'members',
-      icon: 'las la-users',
-      is_active: false,
-      has_child: false,
-      children: []
-    },
-    {
-      name: 'Iuran Sukarela',
-      slug: 'iuran',
-      icon: 'las la-money-bill-wave',
-      is_active: false,
-      has_child: false,
-      children: []
-    },
+    // {
+    //   name: 'Members',
+    //   slug: 'members',
+    //   icon: 'las la-users',
+    //   is_active: false,
+    //   has_child: false,
+    //   children: []
+    // },
+    // {
+    //   name: 'Iuran Sukarela',
+    //   slug: 'iuran',
+    //   icon: 'las la-money-bill-wave',
+    //   is_active: false,
+    //   has_child: false,
+    //   children: []
+    // },
     {
       name: 'Settings',
       slug: 'settings',
@@ -236,6 +236,10 @@ export default class Sidebar extends Vue {
   get currentMenu() {
     const path = this.$route.path.split('/');
     return path[1];
+  }
+
+  get settings() {
+    return this.$store.getters['user/SETTINGS'];
   }
 
   get currentSubmenu() {

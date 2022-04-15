@@ -9,15 +9,27 @@ import axios from 'axios';
 export default class User extends VuexModule {
   userInfo: UserInterface | null = null;
   loginStatus = false;
+  settings = null;
 
   @Mutation
-  UPDATE_USER_LOGIN(args: UserInterface): void {
+  UPDATE_USER_LOGIN(args: any): void {
     if (args === null) {
       this.userInfo = null;
       this.loginStatus = false;
+      this.settings = null;
     } else {
-      this.userInfo = args;
+      this.userInfo = args.user[0];
       this.loginStatus = true;
+      this.settings = args.settings;
+    }
+  }
+
+  @Mutation
+  UPDATE_SETTINGS(args: any): void {
+    if (args === null) {
+      this.settings = null;
+    } else {
+      this.settings = args;
     }
   }
 
@@ -47,9 +59,15 @@ export default class User extends VuexModule {
   get LOGIN_STATUS(): boolean {
     return this.loginStatus;
   }
+
+  get SETTINGS(): any {
+    return this.settings;
+  }
+
   get TOKEN(): string {
     return this.userInfo ? this.userInfo.token : '';
   }
+
   get GET_FIELDS(): any {
     return getField(this);
   }

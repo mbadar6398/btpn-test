@@ -54,7 +54,7 @@
             <router-link
               v-if="filter.type === 'kepesertaan'"
               :to="'informasi/' + filter.type + '/add'"
-              class="btn btn-sm btn-success mr-4"
+              class="btn btn-sm btn-success"
             >
               <span class="d-flex align-items-center font-weight-bolder">
                 <i class="fas fa-plus mb-0 mr-1"></i>
@@ -71,12 +71,6 @@
               <span class="d-flex align-items-center font-weight-bolder">
                 <i class="fas fa-plus mb-0 mr-1"></i>
                 Add Data
-              </span>
-            </b-button>
-            <b-button variant="primary" size="sm" v-b-modal.modal-filter>
-              <span class="d-flex align-items-center font-weight-bolder">
-                <i class="fas fa-filter mb-0 mr-1"></i>
-                Filter Data
               </span>
             </b-button>
           </template>
@@ -159,6 +153,15 @@
                 </tr>
               </tbody>
             </table>
+            <b-pagination
+              @change="onPageChange"
+              :total-rows="total_rows"
+              :per-page="filter.limit"
+              v-model="filter.page"
+              aria-controls="itemList"
+              class="mt-8"
+              align="center"
+            ></b-pagination>
           </template>
         </Panel>
         <AddInformasiModal :informasi_type="filter.type" />
@@ -175,7 +178,11 @@ import axios from 'axios';
   components: { Panel, AddInformasiModal }
 })
 export default class Informasi extends Vue {
-  filter = {
+  filter: any = {
+    limit: 10,
+    page: 1,
+    name: '',
+    visibility: '',
     type: 'kepesertaan'
   };
   informasiData = [];
@@ -184,6 +191,11 @@ export default class Informasi extends Vue {
   failed = false;
 
   mounted() {
+    this.fetchData();
+  }
+
+  onPageChange(selectedPage: number) {
+    this.filter.page = selectedPage;
     this.fetchData();
   }
 

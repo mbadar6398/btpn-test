@@ -2,7 +2,7 @@
   <b-modal
     id="modal-add"
     hide-footer
-    title="Create new custom page"
+    title="Buat halaman baru"
     @hide="onModalHide"
   >
     <ValidationObserver ref="observer" v-slot="{ handleSubmit }">
@@ -14,9 +14,13 @@
             name="Name"
             rules="required"
           >
-            <label class="font-weight-bolder" for="">
+            <label
+              :class="errors[0] && 'text-danger'"
+              class="font-weight-bolder"
+              for=""
+            >
               <span class="text-danger mr-1">*</span>
-              Name
+              Nama halaman
             </label>
             <input
               type="text"
@@ -25,17 +29,73 @@
               required
               v-model="dataToPost.name"
             />
-            <span class="text-danger">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-        <!-- Name -->
+
+        <!-- Type -->
         <div class="form-group">
           <ValidationProvider
             v-slot="{ errors, classes }"
-            name="Name"
+            name="Jenis halaman"
             rules="required"
           >
-            <label class="font-weight-bolder" for="">
+            <label
+              :class="errors[0] && 'text-danger'"
+              class="font-weight-bolder"
+              for=""
+            >
+              <span class="text-danger mr-1">*</span>
+              Jenis halaman
+            </label>
+            <select
+              @change="dataToPost.template = null"
+              :class="classes"
+              v-model="dataToPost.type"
+              class="form-control form-control-solid"
+            >
+              <option value="Custom">Custom</option>
+              <option value="Template">Template</option>
+            </select>
+          </ValidationProvider>
+        </div>
+
+        <!-- Template name -->
+        <div class="form-group" v-if="dataToPost.type === 'Template'">
+          <ValidationProvider
+            v-slot="{ errors, classes }"
+            name="Nama template"
+            rules="required"
+          >
+            <label
+              :class="errors[0] && 'text-danger'"
+              class="font-weight-bolder"
+              for=""
+            >
+              <span class="text-danger mr-1">*</span>
+              Nama template
+            </label>
+            <input
+              type="text"
+              :class="classes"
+              v-model="dataToPost.template"
+              class="form-control form-control-solid"
+              required
+            />
+          </ValidationProvider>
+        </div>
+
+        <!-- Slug -->
+        <div class="form-group">
+          <ValidationProvider
+            v-slot="{ errors, classes }"
+            name="Slug"
+            rules="required"
+          >
+            <label
+              :class="errors[0] && 'text-danger'"
+              class="font-weight-bolder"
+              for=""
+            >
               <span class="text-danger mr-1">*</span>
               Slug
             </label>
@@ -46,11 +106,11 @@
               required
               v-model="dataToPost.slug"
             />
-            <span class="text-danger">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
+
         <div class="form-group">
-          <label class="font-weight-bolder" for="">Visibility</label>
+          <label class="font-weight-bolder" for="">Status</label>
           <select
             class="form-control form-control-solid"
             v-model="dataToPost.visibility"
@@ -60,7 +120,7 @@
             <option value="Hidden">Hidden</option>
           </select>
         </div>
-        <div class="form-group d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
           <button
             type="submit"
             :disabled="loading"
@@ -68,7 +128,7 @@
           >
             <div v-if="!loading">
               <i class="fa fa-plus"></i>
-              Create page
+              Buat halaman
             </div>
 
             <div

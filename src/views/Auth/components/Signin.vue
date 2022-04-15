@@ -159,6 +159,7 @@ import { email, required } from 'vee-validate/dist/rules';
 import '@/assets/sass/pages/auth/auth.scss';
 extend('email', email);
 extend('required', required);
+import axios from 'axios';
 
 @Component({
   components: {}
@@ -192,6 +193,7 @@ export default class Signin extends Vue {
         this.success = true;
         setTimeout(() => {
           this.$store.dispatch('user/SUCCESS_LOGIN', data.data.data);
+          axios.defaults.headers.common.Authorization = `${data.data.data.user[0].token}`;
           this.$router.push('posts');
         }, 2000);
       })

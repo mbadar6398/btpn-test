@@ -138,7 +138,7 @@ export default class UpdateItem extends Vue {
   async onModalShown() {
     try {
       this.loading_fetch = true;
-      const pagesData = await axios.get('pages?limit=1000&page=1');
+      const pagesData = await axios.get('page/get?limit=1000&page=1');
       const pageData = await axios.get(
         'menu/item/detail/' + this.selected_menu_item
       );

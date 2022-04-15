@@ -6,12 +6,12 @@
       disabled
       style="font-weight: bolder;"
     >
-      <span>Section List</span>
+      <span>List Section</span>
       <span v-if="fetchLoading" class="spinner spinner-success mr-5"></span>
       <span
         v-b-modal.modal-create-section
         class="cursor-pointer"
-        v-if="!fetchLoading"
+        v-if="!fetchLoading && pageType !== 'Custom'"
       >
         <i class="fa fa-plus text-success"></i>
       </span>
@@ -27,12 +27,12 @@
       <span>{{ item.name }}</span>
     </button>
     <div v-if="fetchFailed" class="list-group-item d-flex align-items-center">
-      Failed, Please
+      Gagal, mohon
       <span
         @click="getSections"
         class="text-danger cursor-pointer ml-1 font-weight-bolder"
       >
-        retry
+        coba lagi
       </span>
     </div>
     <CreateSectionModal @refresh="getSections" :page_id="pageId" />
@@ -51,6 +51,7 @@ import CreateSectionModal from './CreateSection.vue';
 export default class SectionList extends Vue {
   @Prop(String) readonly pageId!: string;
   @Prop(String) readonly selected_section!: string;
+  @Prop(String) readonly pageType!: string;
   fetchLoading = false;
   fetchFailed = false;
   sections: any[] = [];

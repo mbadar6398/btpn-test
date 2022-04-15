@@ -34,7 +34,7 @@
           <div class="symbol symbol-circle symbol-40">
             <img
               alt="Pic"
-              src="/media/logo/blue.png"
+              :src="settings.logo_dark"
               height="25"
               width="25"
               style="object-fit: contain;"
@@ -58,14 +58,16 @@
               >
                 <img
                   alt="Pic"
-                  src="/media/logo/blue.png"
+                  :src="settings.logo_dark"
                   height="25"
                   width="25"
                   class="mr-4"
                   style="object-fit: contain;"
                 />
                 <div>
-                  <p class="font-weight-bolder mb-2">MyPertamina Admin</p>
+                  <p class="font-weight-bolder mb-2">
+                    {{ settings.company_name }}
+                  </p>
                   <span
                     class="label label-light-danger font-weight-bolder label-inline mr-2"
                   >
@@ -116,6 +118,10 @@ export default class Headbar extends Vue {
     this.$store.dispatch('user/LOGOUT').then(() => {
       this.$router.push('/');
     });
+  }
+
+  get settings() {
+    return this.$store.getters['user/SETTINGS'];
   }
 
   showOnlineStatus(): void {

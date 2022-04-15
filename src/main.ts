@@ -43,7 +43,6 @@ axios.defaults.baseURL = baseUrl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 if (store.getters['user/TOKEN'] !== '') {
   axios.defaults.headers.common.Authorization = `${store.getters['user/TOKEN']}`;
-
   axios.interceptors.request.use(function(config) {
     return new Promise((resolve) => setTimeout(() => resolve(config), 500));
   });
