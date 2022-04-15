@@ -1,4 +1,1 @@
-export const baseUrl: string =
-  process.env.NODE_ENV === 'production'
-    ? 'http://localhost/dpbca/api/'
-    : 'http://localhost/dpbca/api/';
+export const baseUrl: string = process.env.VUE_APP_ENDPOINT;
