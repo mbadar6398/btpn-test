@@ -6,14 +6,14 @@
       disabled
       style="font-weight: bolder;"
     >
-      <span>Menu List</span>
+      <span>Daftar Menu</span>
       <span v-if="fetchLoading" class="spinner spinner-success mr-5"></span>
     </div>
     <button
       v-for="item in menu"
       :key="item.id"
       type="button"
-      @click="selectPage(item.id)"
+      @click="selectMenu(item.id)"
       :class="selected_menu === item.id && 'bg-darken'"
       class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
     >
@@ -37,7 +37,10 @@
     </button>
     <div v-if="fetchFailed" class="list-group-item d-flex align-items-center">
       Failed, Please
-      <span class="text-danger cursor-pointer ml-1 font-weight-bolder">
+      <span
+        @click="fetchData"
+        class="text-danger cursor-pointer ml-1 font-weight-bolder"
+      >
         retry
       </span>
     </div>
@@ -56,15 +59,20 @@ export default class MenuList extends Vue {
   menu = [];
   fetchLoading = false;
   fetchFailed = false;
-  selectPage(id: string) {
-    this.$emit('selectPage', id);
+  selectMenu(id: string) {
+    this.$emit('selectMenu', id);
   }
 
-  async mounted() {
+  mounted() {
+    this.fetchData();
+  }
+
+  async fetchData() {
     try {
       this.fetchLoading = true;
       this.fetchFailed = false;
       const { data } = await axios.get('menu/get');
+      this.selectMenu(data.data[0].id);
       this.menu = data.data;
       this.fetchLoading = false;
     } catch (error) {

@@ -6,7 +6,7 @@
           Cards
         </span>
         <span class="text-muted mt-1 font-weight-bold font-size-sm">
-          Fill form below to update section information
+          Anda dapat membuat list pada section yang dipilih
         </span>
       </h3>
       <div class="card-toolbar">
@@ -18,7 +18,7 @@
             >
               <div>
                 <i class="la la-plus"></i>
-                New card
+                Buat card
               </div>
             </button>
           </li>
@@ -43,7 +43,7 @@
             >
               {{ item.title }}
             </p>
-            <p class="text-dark-50 elipsis-2">
+            <p class="text-dark-50 elipsis-2" v-if="item.description">
               {{ item.description }}
             </p>
             <a
@@ -52,7 +52,7 @@
               v-if="item.file"
               class="text-success d-block mb-8 font-weight-bold"
             >
-              Download
+              Download file
             </a>
             <div class="d-flex justify-content-between">
               <button
@@ -154,13 +154,13 @@ export default class Cards extends Vue {
 
   deleteCard(id: string) {
     this.$swal({
-      title: 'Are you sure want to delete this card?',
-      text: 'Your action could not be reverted',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
-      denyButtonText: `Cancel`
+      denyButtonText: `Batalkan`
     }).then(async (result) => {
       if (result.isConfirmed) {
         this.loading_get_cards = true;

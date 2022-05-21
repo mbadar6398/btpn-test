@@ -26,6 +26,10 @@ import KepesertaanDetail from '@/views/Custom/Informasi/views/KepesertaanDetail.
 import Pages from '@/views/Pages/views/Pages.vue';
 import PagesDetail from '@/views/Pages/views/PagesDetail.vue';
 
+// Members
+import Members from '@/views/Members/views/Members.vue';
+import MembersAdd from '@/views/Members/views/MembersAdd.vue';
+
 import store from '../store/index';
 
 Vue.use(VueRouter);
@@ -98,6 +102,18 @@ const routes: Array<RouteConfig> = [
     path: '/pages/detail/:id',
     name: 'PagesDetail',
     component: PagesDetail,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/members',
+    name: 'Members',
+    component: Members,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/members/add',
+    name: 'MembersAdd',
+    component: MembersAdd,
     beforeEnter: isAuthenticated
   },
   {

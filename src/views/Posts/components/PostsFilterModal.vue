@@ -2,25 +2,24 @@
   <b-modal id="modal-post-filter" title="Filter Data">
     <form action="">
       <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12">
           <div class="form-group">
-            <label for="">Post title</label>
+            <label class="font-weight-bolder" for="">Judul artikel</label>
             <input
-              v-model="title"
+              v-model="filter.title"
               type="text"
               class="form-control form-control-solid"
-              placeholder="Search post title..."
             />
           </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12">
           <div class="form-group">
-            <label for="">Post category</label>
+            <label for="">Kategori</label>
             <select
               class="form-control form-control-solid"
-              v-model="category_id"
+              v-model="filter.category_id"
             >
-              <option value="">All categories</option>
+              <option value="">Semua kategori</option>
               <option value="Uncategorized">Uncategorized</option>
               <option
                 v-for="item in categories"
@@ -31,24 +30,27 @@
             </select>
           </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12">
           <div class="form-group">
             <label for="">Status</label>
-            <select class="form-control form-control-solid" v-model="status">
-              <option value="">All status</option>
+            <select
+              class="form-control form-control-solid"
+              v-model="filter.status"
+            >
+              <option value="">Semua status</option>
               <option value="Published">Published</option>
               <option value="Draft">Draft</option>
             </select>
           </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12">
           <div class="form-group">
-            <label for="">Visiblity</label>
+            <label for="">Visibilitas</label>
             <select
               class="form-control form-control-solid"
-              v-model="visibility"
+              v-model="filter.visibility"
             >
-              <option value="">All visibility</option>
+              <option value="">Semua visibilitas</option>
               <option value="Public">Public</option>
               <option value="Private">Private</option>
             </select>
@@ -56,7 +58,7 @@
         </div>
         <div class="col-12 col-lg-12">
           <div class="form-group mb-0">
-            <label for="">Date</label>
+            <label for="">Tanggal terbit</label>
             <date-picker
               v-model="selectedDate"
               value-type="format"
@@ -82,42 +84,24 @@ import { Component, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
-import { createHelpers } from 'vuex-map-fields';
-
-const { mapFields } = createHelpers({
-  getterType: 'posts/GET_FIELDS',
-  mutationType: 'posts/UPDATE_FIELDS'
-});
 
 @Component({
   components: {
     DatePicker
-  },
-  computed: {
-    ...mapFields({
-      posts_loading: 'posts_loading',
-      title: 'posts_filter.title',
-      category_id: 'posts_filter.category_id',
-      status: 'posts_filter.status',
-      visibility: 'posts_filter.visibility',
-      start_date: 'posts_filter.start_date',
-      end_date: 'posts_filter.end_date',
-      limit: 'posts_filter.limit',
-      page: 'posts_filter.page'
-    })
   }
 })
 export default class PostsFilterModal extends Vue {
-  posts_loading!: boolean;
-  title!: string;
-  category_id!: string;
-  status!: string;
-  visibility!: string;
-  start_date!: string;
-  end_date!: string;
-  limit!: number;
-  page!: number;
   selectedDate = ['', ''];
+  filter: any = {
+    title: '',
+    category_id: '',
+    status: '',
+    visibility: '',
+    start_date: '',
+    end_date: '',
+    limit: '',
+    page: ''
+  };
 
   get categories() {
     return this.$store.getters['posts/CATEGORIES'];
@@ -140,18 +124,26 @@ export default class PostsFilterModal extends Vue {
   }
 
   resetFilter() {
-    this.$store.commit('posts/RESET_POSTS_FILTER');
     this.selectedDate = ['', ''];
+    this.filter = {
+      title: '',
+      category_id: '',
+      status: '',
+      visibility: '',
+      start_date: '',
+      end_date: '',
+      limit: '',
+      page: ''
+    };
+    this.filterPosts();
   }
 
   async filterPosts() {
+    this.filter.start_date = this.parsedStartDate;
+    this.filter.end_date = this.parsedEndDate;
+    this.filter.page = 1;
+    this.$emit('refresh', this.filter);
     this.$root.$emit('bv::toggle::modal', 'modal-post-filter', '#btnToggle');
-    this.start_date = this.parsedStartDate;
-    this.end_date = this.parsedEndDate;
-    this.page = 1;
-    this.posts_loading = true;
-    await this.$store.dispatch('posts/GET_POSTS');
-    this.posts_loading = false;
   }
 }
 </script>

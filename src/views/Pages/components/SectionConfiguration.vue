@@ -475,7 +475,7 @@
         >
           <div v-if="!submitLoading">
             <i class="fa fa-save"></i>
-            Save changes
+            Simpan Perubahan
           </div>
 
           <div class="d-flex align-items-center justify-content-center" v-else>

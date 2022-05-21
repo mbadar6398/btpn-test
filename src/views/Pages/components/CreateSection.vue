@@ -509,7 +509,7 @@
           >
             <div v-if="!submitLoading">
               <i class="fa fa-plus"></i>
-              Create section
+              Buat Section
             </div>
 
             <div

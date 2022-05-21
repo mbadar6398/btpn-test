@@ -3,7 +3,7 @@
     id="modal-add-card"
     hide-footer
     size="lg"
-    title="Add new card"
+    title="Buat card baru"
     @hide="onModalHide"
     @shown="onModalShown"
   >
@@ -177,6 +177,21 @@
             class="img-fluid mt-4"
             alt=""
           />
+          <div v-if="dataToPost.file" class="mt-4">
+            <a
+              class="text-success font-weight-bolder mr-4 cursor-pointer"
+              target="_blank"
+              :href="dataToPost.file"
+            >
+              Preview file
+            </a>
+            <a
+              class="text-danger font-weight-bolder cursor-pointer"
+              @click="dataToPost.file = null"
+            >
+              Hapus file
+            </a>
+          </div>
         </div>
 
         <!-- Image-->
@@ -201,6 +216,15 @@
             class="img-fluid mt-4"
             alt=""
           />
+          <div v-if="dataToPost.image" class="mt-4">
+            <a
+              class="text-danger font-weight-bolder cursor-pointer mt-2"
+              @click="dataToPost.image = null"
+            >
+              <i class="fa fa-trash-alt text-danger"></i>
+              Hapus gambar
+            </a>
+          </div>
         </div>
 
         <!-- Icon-->
@@ -226,6 +250,15 @@
             class="img-fluid mt-4"
             alt=""
           />
+          <div v-if="dataToPost.icon" class="mt-4">
+            <a
+              class="text-danger font-weight-bolder cursor-pointer mt-2"
+              @click="dataToPost.icon = null"
+            >
+              <i class="fa fa-trash-alt text-danger"></i>
+              Hapus gambar
+            </a>
+          </div>
         </div>
 
         <div class="form-group d-flex justify-content-center">
@@ -236,7 +269,7 @@
           >
             <div v-if="!loading">
               <i class="la la-plus"></i>
-              Add new card
+              Buat card baru
             </div>
 
             <div
@@ -246,7 +279,7 @@
               <span
                 class="spinner spinner-track spinner-success spinner-sm mr-6"
               ></span>
-              <span class="ml-2">Loading...</span>
+              <span class="ml-2">Memuat...</span>
             </div>
           </button>
         </div>

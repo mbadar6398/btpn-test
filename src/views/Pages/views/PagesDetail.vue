@@ -132,7 +132,7 @@
                 >
                   <div v-if="!updateLoading">
                     <i class="fa fa-save"></i>
-                    Save changes
+                    Simpan Perubahan
                   </div>
 
                   <div

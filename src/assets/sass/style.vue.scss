@@ -382,3 +382,11 @@ body.app.swal2-shown.swal2-height-auto {
   background-color: #f3f3f3 !important;
   border-bottom: solid 1px #e4e4e4 !important;
 }
+.mx-input:hover,
+.mx-input:focus {
+  border-color: #d9dce0 !important;
+}
+
+.mx-input {
+  background-color: #d9dce0 !important;
+}

@@ -63,7 +63,7 @@ export default class PostsCard extends Vue {
   get imageUrl() {
     return this.data?.featured_img
       ? this.data.featured_img
-      : 'https://via.placeholder.com/1200x628.png';
+      : 'https://via.placeholder.com/1200x628.png?text=No+Image';
   }
 
   get categoryName() {

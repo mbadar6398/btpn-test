@@ -2,8 +2,9 @@
   <b-modal
     id="modal-post-category"
     hide-footer
-    title="Post category"
+    title="Kategori artikel"
     @hide="cancelEditing()"
+    @shown="onModalShown"
   >
     <div class="row">
       <!-- Insert form -->
@@ -11,7 +12,7 @@
         <div class="form-group  d-flex align-items-end">
           <div style="flex: 1;">
             <label class="font-weight-bolder" for="">
-              Create new category
+              Buat kategori baru
             </label>
             <input
               v-model="insertValue"
@@ -27,8 +28,9 @@
             :disabled="insertLoading"
           >
             <div v-if="!insertLoading">
-              <span>
-                Add
+              <span class="font-weight-bolder">
+                <i class="fa fa-plus"></i>
+                Buat
               </span>
             </div>
             <div
@@ -38,7 +40,7 @@
               <span
                 class="spinner spinner-track spinner-primary spinner-sm mr-8"
               ></span>
-              Loading...
+              Memuat...
             </div>
           </button>
         </div>
@@ -48,7 +50,7 @@
       <div class="col-12" v-show="isEditing">
         <div class="form-group  d-flex align-items-end">
           <div style="flex: 1;">
-            <label class="font-weight-bolder" for="">Update category</label>
+            <label class="font-weight-bolder" for="">Nama kategori</label>
             <input
               ref="updateInput"
               type="text"
@@ -65,10 +67,10 @@
               <span
                 class="spinner spinner-track spinner-success spinner-sm mr-8"
               ></span>
-              Loading...
+              Memuat...
             </div>
             <span v-else>
-              Save
+              Simpan
             </span>
           </button>
           <button
@@ -76,7 +78,7 @@
             type="button"
             class="btn btn-secondary ml-4"
           >
-            Cancel
+            Batalkan
           </button>
         </div>
       </div>
@@ -90,11 +92,29 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Name</th>
-                <th class="text-right" scope="col">Action</th>
+                <th scope="col">Nama</th>
+                <th class="text-right" scope="col">Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody v-if="loading">
+              <tr>
+                <td colspan="2" class="text-center">Memuat...</td>
+              </tr>
+            </tbody>
+            <tbody v-else-if="failed">
+              <tr>
+                <td colspan="2" class="text-center">
+                  Gagal mendapatkan data,
+                  <span
+                    @click="getCategories"
+                    class="text-danger font-weight-bolder cursor-pointer"
+                  >
+                    Coba lagi
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
               <tr>
                 <td style="padding: 1.25rem .75rem">
                   <span>Uncategorized</span>
@@ -137,6 +157,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import axios from 'axios';
 
 interface CategoryTypes {
   id: string;
@@ -149,9 +170,9 @@ interface CategoryTypes {
 })
 export default class PostCategoryModal extends Vue {
   @Prop(String) readonly selectedCategoryId!: string;
-  get categories() {
-    return this.$store.getters['posts/CATEGORIES'];
-  }
+  loading = true;
+  failed = false;
+  categories: any = [];
   isEditing = false;
   editedCategory: any = null;
   updateValue = '';
@@ -159,6 +180,23 @@ export default class PostCategoryModal extends Vue {
   insertLoading = false;
   updateLoading = false;
   deleteLoading = false;
+
+  onModalShown() {
+    this.getCategories();
+  }
+
+  async getCategories() {
+    try {
+      this.loading = true;
+      this.failed = false;
+      const category = await axios.get('/posts/get-category');
+      this.categories = category.data.data;
+      this.loading = false;
+    } catch (error) {
+      this.loading = false;
+      this.failed = true;
+    }
+  }
 
   selectCategory(item: CategoryTypes) {
     const elem: HTMLElement = this.$refs.updateInput as HTMLElement;
@@ -176,36 +214,42 @@ export default class PostCategoryModal extends Vue {
     this.insertValue = '';
   }
 
-  insertCategory() {
+  async insertCategory() {
     if (this.insertValue !== '') {
-      this.insertLoading = true;
-      this.$store
-        .dispatch('posts/INSERT_NEW_CATEGORY', {
+      try {
+        this.insertLoading = true;
+        await axios.post('/posts/insert-category', {
           name: this.insertValue
-        })
-        .finally(() => {
-          this.insertLoading = false;
-          this.insertValue = '';
         });
+        this.getCategories();
+        this.insertLoading = false;
+        this.insertValue = '';
+      } catch (error) {
+        this.insertLoading = false;
+      }
     }
   }
   deleteCategory(id: string) {
     this.cancelEditing();
     this.$swal({
-      title: 'Are you sure want to delete this category?',
-      text: 'Every posts using this category would be uncategorized',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
-      denyButtonText: `Cancel`
-    }).then((result) => {
+      denyButtonText: `Batalkan`
+    }).then(async (result) => {
       if (result.isConfirmed) {
         if (this.selectedCategoryId !== id) {
-          this.deleteLoading = true;
-          this.$store.dispatch('posts/DELETE_CATEGORY', id).finally(() => {
+          try {
+            this.deleteLoading = true;
+            await axios.delete('/posts/delete-category/' + id);
             this.deleteLoading = false;
-          });
+            this.getCategories();
+          } catch (error) {
+            this.deleteLoading = false;
+          }
         } else {
           this.$swal(
             'Failed',
@@ -216,19 +260,19 @@ export default class PostCategoryModal extends Vue {
       }
     });
   }
-  updateCategory() {
+  async updateCategory() {
     if (this.updateValue !== '') {
-      this.updateLoading = true;
-      setTimeout(() => {
-        this.$store
-          .dispatch('posts/UPDATE_CATEGORY', {
-            id: this.editedCategory,
-            name: this.updateValue
-          })
-          .finally(() => {
-            this.updateLoading = false;
-          });
-      }, 2000);
+      try {
+        this.updateLoading = true;
+        await axios.put('/posts/update-category/' + this.editedCategory, {
+          id: this.editedCategory,
+          name: this.updateValue
+        });
+        this.updateLoading = false;
+        this.getCategories();
+      } catch (error) {
+        this.updateLoading = false;
+      }
     }
   }
 }

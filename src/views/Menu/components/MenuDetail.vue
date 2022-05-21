@@ -1,11 +1,11 @@
 <template>
   <div>
     <Panel
-      :title="selected_menu === '' ? 'Please select menu' : 'Menu Detail'"
+      :title="selected_menu === '' ? 'Pilih menu' : 'Detail Menu'"
       :subtitle="
         selected_menu === ''
-          ? 'Please select menu on the left panel'
-          : 'You can add, update, delete here'
+          ? 'Silakan memilih menu pada panel disamping kiri'
+          : 'Anda dapat mengelola menu di bawah ini'
       "
     >
       <template v-slot:toolbar>
@@ -17,7 +17,7 @@
         >
           <span class="d-flex align-items-center font-weight-bolder">
             <i class="fas fa-plus mb-0 mr-1"></i>
-            Add Page
+            Tambahkan halaman
           </span>
         </b-button>
       </template>
@@ -26,8 +26,8 @@
         <table class="table" v-if="selected_menu !== ''">
           <thead class="bg-dark text-white">
             <tr>
-              <th>Name</th>
-              <th class="text-center" width="27%">Actions</th>
+              <th>Nama</th>
+              <th class="text-center" width="27%">Aksi</th>
             </tr>
           </thead>
           <tbody v-if="!fetchLoading && !fetchFailed" class="py-4">
@@ -49,7 +49,7 @@
                     <div class="text-center">
                       <button
                         v-b-tooltip.hover
-                        title="Add submenu / page"
+                        title="Tambahkan sub halaman"
                         class="btn btn-transparent p-0 mr-4"
                         @click="addSubmenu(item.id)"
                         v-b-modal.modal-add-page
@@ -60,14 +60,14 @@
                         v-b-tooltip.hover
                         v-b-modal.modal-update-page
                         @click="selected_menu_item = item.id"
-                        title="Update page"
+                        title="Update halaman"
                         class="btn btn-transparent p-0 mr-4"
                       >
                         <i class="fa fa-pencil-alt text-success"></i>
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Remove page from menu"
+                        title="Hapus halaman dari menu"
                         class="btn btn-transparent p-0 mr-4"
                         @click="deletePage(item.id)"
                       >
@@ -75,7 +75,7 @@
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Move up"
+                        title="Pindahkan keatas"
                         class="btn btn-transparent p-0 mr-4"
                         :disabled="index === 0"
                         @click="increaseOrder(item.id)"
@@ -84,7 +84,7 @@
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Move down"
+                        title="Pindahkan kebawah"
                         class="btn btn-transparent p-0"
                         :disabled="pages.length - 1 === index"
                         @click="decreaseOrder(item.id)"
@@ -108,7 +108,7 @@
                     <div class="text-center">
                       <button
                         v-b-tooltip.hover
-                        title="Page Detail"
+                        title="Update halaman"
                         class="btn btn-transparent p-0 mr-4"
                         v-b-modal.modal-update-page
                         @click="selected_menu_item = item2.id"
@@ -117,7 +117,7 @@
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Remove page from menu"
+                        title="Hapus halaman dari menu"
                         class="btn btn-transparent p-0 mr-4"
                         @click="deletePage(item2.id)"
                       >
@@ -125,7 +125,7 @@
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Move up"
+                        title="Pindahkan keatas"
                         class="btn btn-transparent p-0 mr-4"
                         :disabled="index2 === 0"
                         @click="increaseOrder(item2.id)"
@@ -134,7 +134,7 @@
                       </button>
                       <button
                         v-b-tooltip.hover
-                        title="Move down"
+                        title="Pindahkan kebawah"
                         class="btn btn-transparent p-0"
                         :disabled="item['children'].length - 1 === index2"
                         @click="decreaseOrder(item2.id)"
@@ -151,9 +151,9 @@
             <tr>
               <th colspan="2" class="text-center">
                 <span>
-                  Failed fetch data, Please
+                  Gagal mendapatkan data,
                   <span class="text-success cursor-pointer" @click="fetchData">
-                    retry
+                    Coba kembali
                   </span>
                 </span>
               </th>
@@ -163,17 +163,11 @@
             <tr>
               <th colspan="2" class="text-center">
                 <span class="spinner spinner-success spinner-sm mr-8"></span>
-                <span>Uploading...</span>
+                <span>Memuat...</span>
               </th>
             </tr>
           </tbody>
         </table>
-        <p
-          v-if="!fetchFailed && !fetchLoading && pages.length === 0"
-          class="text-center"
-        >
-          Data is not found
-        </p>
       </template>
     </Panel>
     <AddItem
@@ -247,11 +241,11 @@ export default class MenuDetail extends Vue {
 
   async deletePage(id: string) {
     this.$swal({
-      title: 'Are you sure want to delete this page from menu?',
-      text: 'Your action could not be reverted',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
       denyButtonText: `Cancel`
     }).then(async (result) => {

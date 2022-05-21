@@ -10,7 +10,7 @@
     <div v-if="loading_data">
       <div class="text-center">
         <span class="spinner spinner-success mr-6"></span>
-        <span class="ml-2">Loading...</span>
+        <span class="ml-2">Memuat...</span>
       </div>
     </div>
     <ValidationObserver v-else ref="observer" v-slot="{ handleSubmit }">
@@ -190,7 +190,7 @@
               class="text-danger font-weight-bolder cursor-pointer"
               @click="dataToPost.file = null"
             >
-              Remove file
+              Hapus file
             </a>
           </div>
         </div>
@@ -218,7 +218,7 @@
               @click="dataToPost.image = null"
             >
               <i class="fa fa-trash-alt text-danger"></i>
-              Remove
+              Hapus
             </a>
           </div>
           <img
@@ -251,7 +251,7 @@
               @click="dataToPost.icon = null"
             >
               <i class="fa fa-trash-alt text-danger"></i>
-              Remove
+              Hapus
             </a>
           </div>
           <img
@@ -269,7 +269,7 @@
           >
             <div v-if="!loading">
               <i class="la la-save"></i>
-              Submit
+              Simpan Perubahan
             </div>
 
             <div

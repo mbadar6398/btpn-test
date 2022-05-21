@@ -6,19 +6,24 @@
           Sliders
         </span>
         <span class="text-muted mt-1 font-weight-bold font-size-sm">
-          Fill form below to update section information
+          Anda dapat menambahkan, mengubah, dan menghapus slider
         </span>
       </h3>
       <div class="card-toolbar">
         <ul class="nav nav-pills nav-pills-sm nav-dark-75">
-          <li class="nav-item mr-4" v-if="!edit_mode" @click="add">
+          <li
+            class="nav-item"
+            :class="!edit_mode ? '' : 'mr-4'"
+            v-if="!edit_mode"
+            @click="add"
+          >
             <button
               class="btn btn-success btn-block btn-sm font-weight-bolder"
               :disabled="loading_process"
             >
               <div v-if="!loading_process">
                 <i class="la la-save"></i>
-                Save Changes
+                Simpan Perubahan
               </div>
 
               <div
@@ -40,7 +45,7 @@
             >
               <div v-if="!loading_process">
                 <i class="la la-save"></i>
-                Save Changes
+                Simpan Perubahan
               </div>
 
               <div
@@ -62,7 +67,7 @@
             >
               <div v-if="!loading_process">
                 <i class="fa fa-trash"></i>
-                Delete Slider
+                Hapus Slider
               </div>
 
               <div
@@ -80,56 +85,43 @@
       </div>
     </div>
     <div class="card-body border-0 pt-0">
-      <div class="form-group">
-        <label class="font-weight-bolder" for="">Select slider</label>
-        <SelectData
-          :loading="loading_get_sliders"
-          :data="sliders"
-          :select_all="true"
-          select_all_name="Add New slider"
-          :blank="false"
-          @changed="onSliderSelected"
-          v-model="selected_slider"
-          required
-        />
-      </div>
-      <div class="row mt-8">
-        <div class="col-12">
-          <div class="position-relative">
-            <img
-              :src="
-                dataToPost.background
-                  ? dataToPost.background
-                  : 'https://via.placeholder.com/1400x768'
-              "
-              class="img-fluid"
-              alt=""
-            />
-            <div
-              class="d-flex align-items-center"
-              style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; width: 100%;"
-            >
-              <div class="container">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="text-white" v-html="dataToPost.content"></div>
-                    <a
-                      href="#"
-                      style="background-color: #ffde00; color: #000000; padding: 1rem 1.25rem; border-radius: 5px;"
-                      v-if="dataToPost.url"
-                      class="d-inline-block btn-outline mt-3"
-                    >
-                      {{ dataToPost.button_label }}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="d-flex align-items-center ">
+        <div class="form-group" style="width: 100%;">
+          <label class="font-weight-bolder" for="">Pilih slider</label>
+          <SelectData
+            :loading="loading_get_sliders"
+            :data="sliders"
+            :select_all="true"
+            select_all_name="Buat slider baru"
+            :blank="false"
+            @changed="onSliderSelected"
+            v-model="selected_slider"
+            required
+          />
         </div>
-        <div class="col-12 mt-8">
+        <button
+          :disabled="loading_reorder || Number(dataToPost.order_seq) === 1"
+          @click="decreaseOrder(dataToPost.id)"
+          class="btn btn-primary ml-4"
+          v-if="selected_slider"
+        >
+          <i class="fa fa-chevron-up p-0"></i>
+        </button>
+        <button
+          :disabled="
+            loading_reorder || sliders.length === Number(dataToPost.order_seq)
+          "
+          @click="increaseOrder(dataToPost.id)"
+          class="btn btn-primary ml-4"
+          v-if="selected_slider"
+        >
+          <i class="fa fa-chevron-down p-0"></i>
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-12">
           <div class="form-group">
-            <label class="font-weight-bolder" for="">Slider name</label>
+            <label class="font-weight-bolder" for="">Nama slider</label>
             <input
               class="form-control form-control-solid"
               v-model="dataToPost.name"
@@ -137,35 +129,9 @@
             />
           </div>
         </div>
-        <!-- Description Content -->
         <div class="col-12">
           <div class="form-group">
-            <label class="font-weight-bolder" for="">
-              <span class="text-danger mr-1">*</span>
-              Content
-            </label>
-            <Editor
-              api-key="quq8vd89bv5ivyw082b8g49x7iuu6uh0h85p8deb4mdplqpa"
-              v-model="dataToPost.content"
-              :init="{
-                height: 360,
-                menubar: false,
-                plugins: [
-                  'textcolor advlist autolink lists link image charmap print preview anchor',
-                  'searchreplace visualblocks code fullscreen',
-                  'insertdatetime media table paste code help wordcount'
-                ],
-                toolbar:
-                  'forecolor backcolor | undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help'
-              }"
-            />
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="form-group">
-            <label class="font-weight-bolder" for="">Action Url</label>
+            <label class="font-weight-bolder" for="">Action URL</label>
             <input
               class="form-control form-control-solid"
               v-model="dataToPost.url"
@@ -175,23 +141,42 @@
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="font-weight-bolder" for="">Button Label</label>
-            <input
-              class="form-control form-control-solid"
-              v-model="dataToPost.button_label"
-              type="text"
-            />
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="form-group">
-            <label class="font-weight-bolder" for="">Background</label>
+            <label class="font-weight-bolder" for="">
+              Gambar (1200 x 443)
+            </label>
             <UploadInput
               directory="sliders"
               :encrypt="true"
               :overwrite="false"
               v-model="dataToPost.background"
             />
+            <a
+              :href="dataToPost.background"
+              class="d-block text-center"
+              target="_blank"
+            >
+              <img class="img-fluid mt-4" :src="dataToPost.background" />
+            </a>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label class="font-weight-bolder" for="">
+              Gambar Mobile(500 x 650)
+            </label>
+            <UploadInput
+              directory="sliders"
+              :encrypt="true"
+              :overwrite="false"
+              v-model="dataToPost.background_mobile"
+            />
+            <a :href="dataToPost.background" target="_blank">
+              <img
+                class="img-fluid mt-4"
+                :src="dataToPost.background_mobile"
+                style="max-height: 200px;"
+              />
+            </a>
           </div>
         </div>
       </div>
@@ -206,8 +191,12 @@ import SelectData from '@/components/SelectData.vue';
 import MainConfig from '@/config/config';
 import Editor from '@tinymce/tinymce-vue';
 import axios from 'axios';
+import VueSlickCarousel from 'vue-slick-carousel';
+import 'vue-slick-carousel/dist/vue-slick-carousel.css';
+// optional style for arrows & dots
+import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 @Component({
-  components: { UploadInput, SelectData, Editor },
+  components: { UploadInput, SelectData, Editor, VueSlickCarousel },
   computed: {}
 })
 export default class Sliders extends Vue {
@@ -219,6 +208,7 @@ export default class Sliders extends Vue {
   edit_mode = false;
   is_mobile = false;
   content = false;
+  loading_reorder = false;
   selected_slider = '';
   dataToPost = {
     id: '',
@@ -228,7 +218,8 @@ export default class Sliders extends Vue {
     button_label: '',
     content: '',
     background: '',
-    background_mobile: ''
+    background_mobile: '',
+    order_seq: ''
   };
 
   mounted() {
@@ -254,6 +245,7 @@ export default class Sliders extends Vue {
     this.dataToPost.content = '';
     this.dataToPost.background = '';
     this.dataToPost.background_mobile = '';
+    this.dataToPost.order_seq = '';
     this.edit_mode = false;
   }
 
@@ -270,6 +262,7 @@ export default class Sliders extends Vue {
       this.dataToPost.content = filteredSlider.content;
       this.dataToPost.background = filteredSlider.background;
       this.dataToPost.background_mobile = filteredSlider.background_mobile;
+      this.dataToPost.order_seq = filteredSlider.order_seq;
       this.edit_mode = true;
     } else {
       this.resetData();
@@ -291,15 +284,35 @@ export default class Sliders extends Vue {
     await this.getSliders();
   }
 
+  async decreaseOrder(id: string) {
+    this.loading_get_sliders = true;
+    this.loading_reorder = true;
+    await axios.put('/sliders/increase-order/' + id);
+    await this.getSliders();
+    await this.onSliderSelected(this.selected_slider);
+    this.loading_reorder = false;
+    this.loading_get_sliders = false;
+  }
+
+  async increaseOrder(id: string) {
+    this.loading_get_sliders = true;
+    this.loading_reorder = true;
+    await axios.put('/sliders/decrease-order/' + id);
+    await this.getSliders();
+    await this.onSliderSelected(this.selected_slider);
+    this.loading_reorder = false;
+    this.loading_get_sliders = false;
+  }
+
   async deleteSlider() {
     this.$swal({
-      title: 'Are you sure want to delete this slider?',
-      text: "Your action couldn't be reverted",
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
-      denyButtonText: `Cancel`
+      denyButtonText: `Batalkan`
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {

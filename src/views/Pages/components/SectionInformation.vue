@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Panel :title="panelTitle" :subtitle="'Section Information'" class="mb-8">
+    <Panel :title="panelTitle" :subtitle="'Informasi Section'" class="mb-8">
       <template v-slot:toolbar>
         <router-link to="/pages" class="btn btn-secondary btn-sm mr-4">
           <span class="d-flex align-items-center font-weight-bolder">
@@ -63,7 +63,7 @@
           <b-dropdown-item @click="deleteSection(selected_section)">
             <span class="d-flex align-items-center">
               <i class="fa fa-trash-alt text-danger mr-2 mb-0"></i>
-              Delete Section
+              Hapus Section
             </span>
           </b-dropdown-item>
         </b-dropdown>
@@ -75,7 +75,7 @@
             <div class="col-6">
               <div class="form-group">
                 <label class="font-weight-bolder" for="">
-                  Section name
+                  Nama section
                   <span class="text-danger">*</span>
                 </label>
                 <input
@@ -88,7 +88,7 @@
             <div class="col-6">
               <div class="form-group">
                 <label class="font-weight-bolder" for="">
-                  Visibility
+                  Status
                   <span class="text-danger">*</span>
                 </label>
                 <select
@@ -477,13 +477,13 @@ export default class SectionInformation extends Vue {
 
   async deleteSection(id: string) {
     this.$swal({
-      title: 'Are you sure want to delete this section?',
-      text: 'Your action could not be reverted',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
-      denyButtonText: `Cancel`
+      denyButtonText: `Batalkan`
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {

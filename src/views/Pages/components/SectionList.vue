@@ -6,7 +6,7 @@
       disabled
       style="font-weight: bolder;"
     >
-      <span>List Section</span>
+      <span>Daftar Section</span>
       <span v-if="fetchLoading" class="spinner spinner-success mr-5"></span>
       <span
         v-b-modal.modal-create-section

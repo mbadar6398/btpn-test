@@ -2,6 +2,7 @@ declare module 'vuex-map-fields';
 declare module 'vue-clickaway';
 declare module 'bootstap-vue';
 declare module 'v-calendar';
+declare module 'vue-slick-carousel';
 declare module 'vue-content-placeholders';
 declare module 'vue-good-table';
 declare module 'vee-validate';

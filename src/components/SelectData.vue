@@ -6,13 +6,14 @@
   >
     <select
       refs="input"
+      :style="failed ? 'border-color: red;' : ''"
       :class="classes"
       :disabled="loading"
       class="form-control form-control-solid"
       @change="selectData"
       required
     >
-      <option v-if="loading" value="">Loading....</option>
+      <option v-if="loading" value="">Memuat....</option>
       <option v-if="!loading && blank" value="null">Uncategorized</option>
       <option v-if="!loading && select_all" value="">
         {{ select_all_name ? select_all_name : 'Select all' }}
@@ -21,10 +22,10 @@
         {{ item.name }}
       </option>
     </select>
-    <div v-if="failed" class="mt-2">
-      Failed fetching data.
+    <div v-if="failed" class="mt-2 mb-4">
+      Gagal memuat data,
       <span @click="retry" class="text-danger font-weight-bold cursor-pointer">
-        Try again
+        Coba lagi
       </span>
     </div>
     <span class="form-error-message">{{ errors[0] }}</span>

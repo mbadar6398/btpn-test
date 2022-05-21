@@ -129,7 +129,7 @@ import vuescroll from 'vuescroll';
 export default class Sidebar extends Vue {
   menus = [
     {
-      name: 'Posts',
+      name: 'Artikel',
       slug: 'posts',
       icon: 'la la-newspaper',
       is_active: false,
@@ -145,7 +145,7 @@ export default class Sidebar extends Vue {
       children: []
     },
     {
-      name: 'Pages',
+      name: 'Halaman',
       slug: 'pages',
       icon: 'las la-folder',
       is_active: false,
@@ -168,6 +168,14 @@ export default class Sidebar extends Vue {
       has_child: false,
       children: []
     },
+    {
+      name: 'Members',
+      slug: 'members',
+      icon: 'las la-user',
+      is_active: false,
+      has_child: false,
+      children: []
+    },
     // {
     //   name: 'Members',
     //   slug: 'members',
@@ -185,7 +193,7 @@ export default class Sidebar extends Vue {
     //   children: []
     // },
     {
-      name: 'Settings',
+      name: 'Pengaturan',
       slug: 'settings',
       icon: 'la la-cog',
       is_active: false,

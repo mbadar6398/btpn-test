@@ -4,7 +4,6 @@
     size="xl"
     hide-footer
     title="Add Datatable"
-    @shown="onModalShown"
     @hide="onModalHide"
   >
     <div>
@@ -42,27 +41,6 @@
         ></prism-editor>
       </div>
       <div class="table-responsive" v-if="shortcode">
-        <!-- <table class="table">
-          <thead class="bg-primary">
-            <tr>
-              <th
-                v-for="(items, index) in headers"
-                :key="index"
-                class="text-white"
-              >
-                {{ items }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(items, index) in data" :key="index">
-              <td v-for="(items2, index2) in headers" :key="index2">
-                {{ items[items2] }}
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-
         <vue-good-table
           :columns="headers"
           :rows="data"
@@ -119,10 +97,11 @@ export default class GeneralSettings extends Vue {
       }
     }
   }
+
   highlighter(code: any) {
     return highlight(code, languages.js);
   }
-  //   onModalShown() {}
+
   onModalHide() {
     this.data = [];
     this.headers = [];

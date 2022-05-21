@@ -1,39 +1,35 @@
 <template>
   <div class="container">
-    <!-- Form -->
     <div class="row">
-      <div class="col-12">
-        <h4 class="mb-6">Create New Post</h4>
-      </div>
+      <!-- Content container -->
       <div class="col-8">
+        <!-- Title -->
         <div class="form-group">
           <input
             type="text"
             v-model="dataToPost.title"
-            placeholder="Your title here..."
+            placeholder="Tulis judul disini"
             class="form-control form-control-lg"
           />
         </div>
-        <div class="form-group">
-          <div class="position-relative">
-            <div
-              style="position: absolute; top: 0;bottom: 0; left: 0; height: 100%; display: flex; align-items: center; background: #eeeeee; border: solid 1px #cccccc; padding: 0 1rem;"
-              for=""
-            >
-              http://mypertamina.id/
-            </div>
+
+        <!-- Slug -->
+        <div class="form-group mb-2">
+          <div class="position-relative d-flex">
+            <div class="post-slug-label">{{ base_url }}</div>
             <input
-              style="padding-left: 200px;"
               type="text"
               v-model="dataToPost.slug"
-              class="form-control form-control-lg"
+              class="form-control form-control-lg post-slug-input"
             />
           </div>
           <label for="" class="mt-2">
-            If you keep this blank. this slug will automatically use the title
-            of this post
+            Jika anda membiarkan field slug diatas kosong, maka akan secara
+            otomatis mengambil dari judul artikel
           </label>
         </div>
+
+        <!-- Content -->
         <div class="form-group bg-white">
           <Editor
             api-key="quq8vd89bv5ivyw082b8g49x7iuu6uh0h85p8deb4mdplqpa"
@@ -42,78 +38,81 @@
           />
         </div>
       </div>
+
       <div class="col-4">
+        <!-- Configuration -->
         <div class="card">
           <div class="card-header font-weight-bolder p-4">
-            Configuration
+            Konfigurasi
           </div>
           <div class="card-body p-4">
+            <!-- Visibility -->
             <div class="form-group">
-              <label for="">Visibility :</label>
+              <label class="font-weight-bolder" for="">Visibility :</label>
               <select
-                class="form-control form-control-solid form-control-sm"
+                class="form-control form-control-solid"
                 v-model="dataToPost.visibility"
               >
                 <option value="Public">Public</option>
                 <option value="Private">Private</option>
               </select>
             </div>
+
+            <!-- Status -->
             <div class="form-group">
-              <label for="">Status :</label>
+              <label class="font-weight-bolder" for="">Status :</label>
               <select
-                class="form-control form-control-solid form-control-sm"
+                class="form-control form-control-solid"
                 v-model="dataToPost.status"
               >
                 <option value="Published">Published</option>
                 <option value="Draft">Draft</option>
               </select>
             </div>
+
+            <!-- Status -->
             <div class="form-group">
-              <label for="">Category :</label>
-              <select
+              <label class="font-weight-bolder" for="">Published Date :</label>
+              <input type="date" class="form-control form-control-solid" />
+            </div>
+
+            <!-- Category -->
+            <div class="form-group mb-2">
+              <label class="font-weight-bolder" for="">Kategori :</label>
+              <SelectData
+                :loading="fetchCategoryLoading"
+                :data="categories"
+                :select_all="true"
+                select_all_name="Uncategorized"
+                :blank="false"
+                :failed="fetchCategoryFailed"
+                :required="false"
                 v-model="dataToPost.category_id"
-                class="form-control form-control-solid form-control-sm mb-4"
-              >
-                <option value="" v-if="categoryLoading">Loading...</option>
-                <option value="">Uncategorized</option>
-                <option
-                  v-for="(item, index) in categories"
-                  :key="index"
-                  :value="item.id"
-                  v-text="item.name"
-                ></option>
-              </select>
+                @retry="getCategory"
+              />
+            </div>
+
+            <!-- Manage category -->
+            <div class="form-group">
               <span
                 v-b-modal.modal-post-category
-                v-if="!categoryLoading"
-                class="text-primary cursor-pointer"
+                v-if="!fetchCategoryLoading"
+                class="text-primary font-weight-bolder cursor-pointer"
               >
                 <i class="la la-pencil text-primary"></i>
-                Manage category
+                Kelola kategori
               </span>
             </div>
-            <button
-              @click="savePost"
-              v-if="!categoryLoading && !uploadLoading"
-              :disabled="savePostLoading"
-              class="btn btn-primary btn-block btn-sm font-weight-bolder"
-            >
-              <div v-if="!savePostLoading">
-                <i class="la la-save"></i>
-                Save changes
-              </div>
 
-              <div
-                class="d-flex align-items-center justify-content-center"
-                v-else
-              >
-                <span
-                  class="spinner spinner-track spinner-primary spinner-sm mr-6"
-                ></span>
-                <span class="ml-2">Loading...</span>
-              </div>
-            </button>
+            <!-- Save changes -->
+            <ButtonProcess
+              v-if="!fetchCategoryLoading && !uploadLoading"
+              label="Simpan Perubahan"
+              :loading="savePostLoading"
+              @process="savePost"
+            />
 
+            <!-- Cancel -->
             <router-link
               to="/posts"
               class="btn btn-default btn-block btn-sm text-dark font-weight-bolder mt-4"
@@ -121,69 +120,47 @@
               <span
                 class="d-flex align-items-center justify-content-center font-weight-bolder"
               >
-                Cancel
+                Batalkan
               </span>
             </router-link>
           </div>
         </div>
+
+        <!-- Featured Image -->
         <div class="card mt-4">
           <div class="card-header font-weight-bolder p-4">
-            Featured Image
+            Gambar utama
           </div>
           <div class="card-body p-4">
             <img
-              :src="
-                dataToPost.image !== ''
-                  ? dataToPost.image
-                  : 'https://via.placeholder.com/1200x628.png'
-              "
+              v-if="dataToPost.image"
+              :src="dataToPost.image"
               class="img-fluid"
-              alt=""
             />
+            <div v-if="dataToPost.image" class="mt-2">
+              <a
+                class="text-danger font-weight-bolder cursor-pointer mt-2"
+                @click="dataToPost.image = null"
+              >
+                <i class="fa fa-trash-alt text-danger"></i>
+                Hapus
+              </a>
+            </div>
             <div class="mt-4">
-              <input
-                type="file"
-                class="d-none"
-                ref="imageInput"
-                id="imageINput"
+              <UploadInput
+                directory="data"
+                name="Image"
+                :encrypt="true"
+                :overwrite="false"
+                v-model="dataToPost.image"
                 accept="image/*"
-                @change="uploadImage"
-                :disabled="uploadLoading"
               />
-              <button
-                id="kt_login_signin_submit"
-                class="btn btn-primary btn-block btn-sm"
-                :disabled="uploadLoading"
-                @click="triggerUpload"
-              >
-                <div v-if="!uploadLoading">
-                  <span>
-                    <i class="la la-upload"></i>
-                    Upload
-                  </span>
-                </div>
-                <div
-                  class="d-flex align-items-center justify-content-center"
-                  v-else
-                >
-                  <span
-                    class="spinner spinner-track spinner-primary spinner-sm mr-6"
-                  ></span>
-                  <span class="ml-2">Loading...</span>
-                </div>
-              </button>
-              <button
-                class="btn btn-danger btn-block btn-sm mt-4"
-                @click="removeImage"
-                v-if="dataToPost.image !== ''"
-              >
-                <i class="la la-trash"></i>
-                Remove image
-              </button>
             </div>
           </div>
         </div>
-        <div class="card mt-4">
+
+        <!-- Tags -->
+        <div class="card mt-4" v-if="postConfig.tags">
           <div class="card-header font-weight-bolder p-4">
             Tags
           </div>
@@ -192,7 +169,7 @@
               <input
                 type="text"
                 class="form-control form-control-sm form-control-solid"
-                v-on:keyup.enter="addTags()"
+                v-on:keyup.enter="addTag()"
                 v-model="tagInput"
               />
               <label class="text-dark-50 font-size-sm" for="">
@@ -218,16 +195,6 @@
             </label>
           </div>
         </div>
-        <div class="card mt-4">
-          <div
-            class="card-header font-weight-bolder p-4 d-flex justify-content-between align-items-center"
-          >
-            <span>Datatable</span>
-            <span v-b-modal.modal-add-table class="cursor-pointer">
-              <i class="fa fa-plus text-success"></i>
-            </span>
-          </div>
-        </div>
       </div>
     </div>
     <AddTable />
@@ -239,39 +206,42 @@
 import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import CategoryModal from '../components/CategoryModal.vue';
+import ButtonProcess from '@/components/ButtonProcess.vue';
+import SelectData from '@/components/SelectData.vue';
+import UploadInput from '@/components/UploadInput/UploadInput.vue';
 import AddTable from '../components/AddTable.vue';
+import MainConfig from '@/config/config';
 
 import Editor from '@tinymce/tinymce-vue';
 
-interface DataToPostType {
-  title: string;
-  content: string;
-  slug: string;
-  tags: string[];
-  image: string;
-  category_id: string;
-  visibility: string;
-  status: string;
-}
-
 @Component({
-  components: { Editor, CategoryModal, AddTable },
+  components: {
+    Editor,
+    CategoryModal,
+    AddTable,
+    ButtonProcess,
+    SelectData,
+    UploadInput
+  },
   computed: {}
 })
 export default class PostsCreate extends Vue {
-  get categories() {
-    return this.$store.getters['posts/CATEGORIES'];
-  }
+  // Categories
+  fetchCategoryLoading = true;
+  fetchCategoryFailed = false;
+  categories = [];
 
-  modules = {
-    table: true
-  };
-
-  tagInput = '';
-  uploadLoading = false;
-  categoryLoading = true;
+  // Posts
   savePostLoading = false;
-  dataToPost: DataToPostType = {
+
+  // Images
+  uploadLoading = false;
+
+  // Tags
+  tagInput = '';
+
+  // Form
+  dataToPost: any = {
     title: '',
     content: '',
     slug: '',
@@ -282,77 +252,49 @@ export default class PostsCreate extends Vue {
     status: 'Published'
   };
 
-  tinyMceConfig = {
-    selector: 'textarea#open-source-plugins',
-    plugins:
-      'preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
-    imagetools_cors_hosts: ['picsum.photos'],
-    menubar: 'file edit view insert format tools table help',
-    toolbar:
-      'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-    toolbar_sticky: false,
-    image_advtab: true,
-    importcss_append: true,
-    height: 1200,
-    image_caption: true,
-    quickbars_selection_toolbar:
-      'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-    noneditable_noneditable_class: 'mceNonEditable',
-    toolbar_mode: 'sliding',
-    contextmenu: 'link image imagetools table',
-    content_style:
-      'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-  };
+  get postConfig() {
+    return MainConfig.postConfig;
+  }
 
-  addTags() {
+  get tinyMceConfig() {
+    return MainConfig.tinyMceConfig;
+  }
+
+  get base_url() {
+    return MainConfig.base_url;
+  }
+
+  async mounted() {
+    this.getCategory();
+  }
+
+  async getCategory() {
+    try {
+      this.fetchCategoryLoading = true;
+      this.fetchCategoryFailed = false;
+      const category = await axios.get('/posts/get-category');
+      this.categories = category.data.data;
+      this.fetchCategoryLoading = false;
+    } catch (error) {
+      this.fetchCategoryLoading = false;
+      this.fetchCategoryFailed = true;
+    }
+  }
+
+  addTag() {
     if (this.tagInput) {
       this.dataToPost.tags.push(this.tagInput);
       this.tagInput = '';
     }
   }
+
   removeTag(index: number) {
     this.dataToPost.tags.splice(index, 1);
   }
 
-  triggerUpload() {
-    const elem: HTMLElement = this.$refs.imageInput as HTMLElement;
-    elem.click();
-  }
-
-  removeImage() {
-    this.dataToPost.image = '';
-    const elm: any = this.$refs.imageInput as HTMLElement;
-    elm.value = '';
-  }
-
-  uploadImage(event: any) {
-    this.uploadLoading = true;
-    const image = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', image);
-    formData.append('directory', 'posts/');
-    const headers = { 'Content-Type': 'multipart/form-data' };
-    axios
-      .post('/upload', formData, { headers })
-      .then((res) => {
-        this.dataToPost.image = res.data.data.url;
-      })
-      .finally(() => {
-        this.uploadLoading = false;
-      });
-  }
-
-  async mounted() {
-    try {
-      await this.$store.dispatch('posts/GET_POSTS_CATEGORY');
-      this.categoryLoading = false;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  convertToSlug(Text: string) {
-    return Text.toLowerCase()
+  convertToSlug(text: string) {
+    return text
+      .toLowerCase()
       .replace(/[^\w ]+/g, '')
       .replace(/ +/g, '-');
   }
@@ -361,17 +303,35 @@ export default class PostsCreate extends Vue {
     this.savePostLoading = true;
     if (this.dataToPost.slug === '') {
       this.dataToPost.slug = this.convertToSlug(this.dataToPost.title);
+    } else {
+      this.dataToPost.slug = this.convertToSlug(this.dataToPost.slug);
     }
     try {
-      const { data } = await this.$store.dispatch(
-        'posts/CREATE_NEW_POST',
-        this.dataToPost
-      );
+      const { data } = await axios.post('/posts/create-posts', this.dataToPost);
       this.savePostLoading = false;
-      this.$router.push({ path: '/posts/get/' + data });
+      this.$router.push({ path: '/posts/get/' + data.data });
     } catch (error) {
+      this.savePostLoading = false;
       return error;
     }
   }
 }
 </script>
+
+<style scoped>
+.post-slug-label {
+  white-space: nowrap !important;
+  height: 100% !important;
+  display: flex !important;
+  height: 44px !important;
+  align-items: center !important;
+  background: #eeeeee !important;
+  border: solid 1px #cccccc !important;
+  padding: 0 1rem !important;
+}
+
+.post-slug-input {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+}
+</style>

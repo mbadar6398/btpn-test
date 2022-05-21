@@ -64,11 +64,11 @@ if (store.getters['user/TOKEN'] !== '') {
       const errorMessage = error.response.data.message;
       Vue.notify({
         group: 'request',
-        title: 'Request failed',
+        title: 'Permintaan gagal',
         type: 'error',
         text: errorMessage
           ? errorMessage
-          : 'No network, please check your connection',
+          : 'Harap mengecek koneksi internet anda',
         duration: 5000
       });
       return Promise.reject(error);

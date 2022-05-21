@@ -166,13 +166,13 @@ export default class Pages extends Vue {
 
   async deletePage(id: string) {
     this.$swal({
-      title: 'Are you sure want to delete this page?',
-      text: 'Your action could not be reverted',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Anda tidak dapat mengembalikan aksi ini',
       showCancelButton: true,
       icon: 'info',
-      confirmButtonText: 'Yes',
+      confirmButtonText: 'Saya mengerti',
       confirmButtonColor: '#03BBB2',
-      denyButtonText: `Cancel`
+      denyButtonText: `Batalkan`
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {

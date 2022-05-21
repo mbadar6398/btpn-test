@@ -4,7 +4,7 @@
       <div class="col-3">
         <MenuList
           :selected_menu="this.selected_menu"
-          @selectPage="selectPage"
+          @selectMenu="selectMenu"
         />
       </div>
       <div class="col-9">
@@ -26,7 +26,7 @@ import MenuDetail from '../components/MenuDetail.vue';
 })
 export default class Menu extends Vue {
   selected_menu = '';
-  selectPage(id: string) {
+  selectMenu(id: string) {
     this.selected_menu = id;
   }
 }

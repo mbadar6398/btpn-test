@@ -8,7 +8,7 @@
   >
     <div class="mb-4">
       <label class="font-weight-bolder" for="">
-        Select type
+        Pilih jenis
         <span class="text-danger">*</span>
       </label>
       <select
@@ -37,7 +37,7 @@
     </div>
     <div class="mb-4" v-if="dataToPost.type === 'page'">
       <label class="font-weight-bolder" for="">
-        Select page
+        Pilih halaman
         <span class="text-danger">*</span>
       </label>
       <v-select
@@ -79,18 +79,23 @@
       />
     </div>
     <div class="mt-8 text-center">
-      <button @click="submit" type="submit" class="btn btn-sm btn-primary">
+      <button
+        :disabled="loading_submit"
+        @click="submit"
+        type="submit"
+        class="btn btn-sm btn-primary"
+      >
         <div v-if="!loading_submit">
           <span class="font-weight-bolder">
             <i class="fa fa-plus"></i>
-            Insert page
+            Tambahkan halaman
           </span>
         </div>
         <div class="d-flex align-items-center justify-content-center" v-else>
           <span
             class="spinner spinner-track spinner-primary spinner-sm mr-6"
           ></span>
-          <span class="ml-2">Loading...</span>
+          <span class="ml-2">Memuat...</span>
         </div>
       </button>
     </div>
