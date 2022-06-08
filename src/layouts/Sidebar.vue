@@ -153,29 +153,45 @@ export default class Sidebar extends Vue {
       children: []
     },
     {
-      name: 'Informasi',
-      slug: 'informasi',
-      icon: 'las la-info-circle',
+      name: 'Plugins',
+      slug: 'plugins',
+      icon: 'la la-plug',
       is_active: false,
-      has_child: false,
-      children: []
+      has_child: true,
+      children: [
+        {
+          name: 'Datatable',
+          slug: 'datatable',
+          has_child: false,
+          is_active: false,
+          children: []
+        }
+      ]
     },
-    {
-      name: 'Regulasi',
-      slug: 'regulasi',
-      icon: 'las la-exclamation-triangle',
-      is_active: false,
-      has_child: false,
-      children: []
-    },
-    {
-      name: 'Members',
-      slug: 'members',
-      icon: 'las la-user',
-      is_active: false,
-      has_child: false,
-      children: []
-    },
+    // {
+    //   name: 'Informasi',
+    //   slug: 'informasi',
+    //   icon: 'las la-info-circle',
+    //   is_active: false,
+    //   has_child: false,
+    //   children: []
+    // },
+    // {
+    //   name: 'Regulasi',
+    //   slug: 'regulasi',
+    //   icon: 'las la-exclamation-triangle',
+    //   is_active: false,
+    //   has_child: false,
+    //   children: []
+    // },
+    // {
+    //   name: 'Members',
+    //   slug: 'members',
+    //   icon: 'las la-user',
+    //   is_active: false,
+    //   has_child: false,
+    //   children: []
+    // },
     // {
     //   name: 'Members',
     //   slug: 'members',
@@ -207,8 +223,8 @@ export default class Sidebar extends Vue {
           children: []
         },
         {
-          name: 'SMTP',
-          slug: 'smtp',
+          name: 'Social Media',
+          slug: 'social-media',
           has_child: false,
           is_active: false,
           children: []

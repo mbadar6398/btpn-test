@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="modal-post-filter" title="Filter Data">
+  <b-modal id="modal-post-filter" @shown="onModalShown" title="Filter Data">
     <form action="">
       <div class="row">
         <div class="col-12">
@@ -83,6 +83,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 import DatePicker from 'vue2-datepicker';
+import axios from 'axios';
 import 'vue2-datepicker/index.css';
 
 @Component({
@@ -92,6 +93,7 @@ import 'vue2-datepicker/index.css';
 })
 export default class PostsFilterModal extends Vue {
   selectedDate = ['', ''];
+  categories = [];
   filter: any = {
     title: '',
     category_id: '',
@@ -102,10 +104,6 @@ export default class PostsFilterModal extends Vue {
     limit: '',
     page: ''
   };
-
-  get categories() {
-    return this.$store.getters['posts/CATEGORIES'];
-  }
 
   get parsedStartDate() {
     return this.selectedDate[0]
@@ -144,6 +142,11 @@ export default class PostsFilterModal extends Vue {
     this.filter.page = 1;
     this.$emit('refresh', this.filter);
     this.$root.$emit('bv::toggle::modal', 'modal-post-filter', '#btnToggle');
+  }
+
+  async onModalShown() {
+    const data = await axios.get('posts/get-category');
+    this.categories = data.data.data;
   }
 }
 </script>

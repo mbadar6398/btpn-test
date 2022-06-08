@@ -10,6 +10,8 @@ import SmtpSettings from '../views/Settings/pages/Smtp.vue';
 import TemplateSettings from '../views/Settings/pages/Template.vue';
 import PasswordSettings from '../views/Settings/pages/Password.vue';
 import SocialMediaSettings from '../views/Settings/pages/SocialMedia.vue';
+import Datatable from '../views/Plugins/Datatable/Datatable.vue';
+import DatatableCreate from '../views/Plugins/Datatable/Create.vue';
 
 // Menu
 import Menu from '@/views/Menu/pages/Menu.vue';
@@ -186,6 +188,18 @@ const routes: Array<RouteConfig> = [
     path: '/regulasi/detail/:id',
     name: 'regulasi-detail',
     component: RegulasiDetail,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/plugins/datatable',
+    name: 'datatable',
+    component: Datatable,
+    beforeEnter: isAuthenticated
+  },
+  {
+    path: '/plugins/datatable/create',
+    name: 'create-datatable',
+    component: DatatableCreate,
     beforeEnter: isAuthenticated
   }
 ];

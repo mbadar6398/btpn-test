@@ -43,22 +43,10 @@
           <div class="card-body">
             <form action="" v-if="!loading">
               <div class="row">
-                <div class="col-6">
+                <div class="col-12">
                   <div class="form-group">
                     <label for="" class="font-weight-bolder">
                       Company name
-                    </label>
-                    <input
-                      v-model="dataToPost.company_name"
-                      type="text"
-                      class="form-control form-control-solid"
-                    />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <label for="" class="font-weight-bolder">
-                      Website name
                     </label>
                     <input
                       v-model="dataToPost.company_name"

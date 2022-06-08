@@ -25,7 +25,7 @@
                     />
                   </div>
                   <button
-                    @click="update(index)"
+                    @click="update(item.id, index)"
                     class="btn btn-success btn-sm ml-8 d-flex align-items-center"
                     style="height: 38px;"
                     :disabled="loading"
@@ -61,10 +61,10 @@ export default class SocialMediaSettings extends Vue {
     this.loading_get = false;
   }
 
-  async update(index: number) {
+  async update(id: string, index: number) {
     this.loading = true;
     const value = this.socmed[index];
-    await axios.put('/settings/socmed/update', value);
+    await axios.put('/settings/socmed/update/' + id, value);
     this.loading = false;
   }
 }

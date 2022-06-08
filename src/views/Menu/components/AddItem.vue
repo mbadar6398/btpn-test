@@ -20,17 +20,27 @@
       >
         <option value="page">Page</option>
         <option value="link">External Link</option>
-        <option value="login">Login</option>
         <option value="no-action">No Action</option>
       </select>
     </div>
     <div class="mb-4">
       <label class="font-weight-bolder" for="">
-        Name
+        Name (ID)
         <span class="text-danger">*</span>
       </label>
       <input
         v-model="dataToPost.name"
+        class="form-control form-control-solid"
+        type="text"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="font-weight-bolder" for="">
+        Name (EN)
+        <span class="text-danger">*</span>
+      </label>
+      <input
+        v-model="dataToPost.name_en"
         class="form-control form-control-solid"
         type="text"
       />
@@ -106,6 +116,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import SelectData from '@/components/SelectData.vue';
 import UploadInput from '@/components/UploadInput/UploadInput.vue';
+import MainConfig from '@/config/config';
 import axios from 'axios';
 @Component({
   components: { SelectData, UploadInput },
@@ -113,13 +124,15 @@ import axios from 'axios';
 })
 export default class AddItem extends Vue {
   @Prop(String) readonly selected_menu!: string;
-  @Prop(String) readonly selected_page!: string;
+  @Prop(String) readonly selected_menu_item!: string;
   dataToPost = {
     page: null,
     type: 'page',
     name: null,
+    name_en: null,
     url: null,
-    icon: null
+    icon: null,
+    page_slug: null
   };
   loading_fetch = false;
   loading_submit = false;
@@ -151,8 +164,10 @@ export default class AddItem extends Vue {
       page: null,
       type: 'page',
       name: null,
+      name_en: null,
       url: null,
-      icon: null
+      icon: null,
+      page_slug: null
     };
   }
 
@@ -169,17 +184,30 @@ export default class AddItem extends Vue {
     this.$emit('reset');
   }
 
+  get website_url() {
+    return MainConfig.website_url;
+  }
+
+  get selected_page(): any {
+    return this.pages.find((item: any) => item.id === this.dataToPost.page);
+  }
+
   async submit() {
     try {
       this.loading_submit = true;
+      if (this.dataToPost.type === 'page') {
+        this.dataToPost.url = this.website_url + this.selected_page.slug;
+      }
+      console.log(this.selected_page);
       await axios.post('menu/item/add', {
         page: this.dataToPost.page,
         type: this.dataToPost.type,
         name: this.dataToPost.name,
+        name_en: this.dataToPost.name_en,
         url: this.dataToPost.url,
         icon: this.dataToPost.icon,
         menu_id: this.selected_menu,
-        parent_id: this.selected_page
+        parent_id: this.selected_menu_item
       });
       this.loading_submit = false;
       this.$root.$emit('bv::hide::modal', 'modal-add-page');

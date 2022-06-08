@@ -1,5 +1,6 @@
 export default {
   base_url: process.env.VUE_APP_BASE_URL,
+  website_url: process.env.VUE_APP_WEBSITE_URL,
   postConfig: {
     tags: false
   },

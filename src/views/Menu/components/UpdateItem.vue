@@ -21,17 +21,27 @@
         >
           <option value="page">Page</option>
           <option value="link">External Link</option>
-          <option value="login">Login</option>
           <option value="no-action">No Action</option>
         </select>
       </div>
       <div class="mb-4">
         <label class="font-weight-bolder" for="">
-          Name
+          Name (ID)
           <span class="text-danger">*</span>
         </label>
         <input
           v-model="dataToPost.name"
+          class="form-control form-control-solid"
+          type="text"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="font-weight-bolder" for="">
+          Name (EN)
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          v-model="dataToPost.name_en"
           class="form-control form-control-solid"
           type="text"
         />
@@ -106,6 +116,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import SelectData from '@/components/SelectData.vue';
 import UploadInput from '@/components/UploadInput/UploadInput.vue';
+import MainConfig from '@/config/config';
 import axios from 'axios';
 @Component({
   components: { SelectData, UploadInput },
@@ -117,8 +128,10 @@ export default class UpdateItem extends Vue {
     page: null,
     type: 'page',
     name: null,
+    name_en: null,
     url: null,
-    icon: null
+    icon: null,
+    page_slug: null
   };
   menu_id = '';
   loading_fetch = true;
@@ -145,8 +158,10 @@ export default class UpdateItem extends Vue {
       this.dataToPost.page = pageData.data.data.page_id;
       this.dataToPost.type = pageData.data.data.menu_item_type;
       this.dataToPost.name = pageData.data.data.menu_item_name;
+      this.dataToPost.name_en = pageData.data.data.menu_item_name_en;
       this.dataToPost.url = pageData.data.data.menu_item_url;
       this.dataToPost.icon = pageData.data.data.menu_item_icon;
+      this.dataToPost.page_slug = pageData.data.data.page_slug;
       this.menu_id = pageData.data.data.menu_id;
       this.pages = pagesData.data.data.data;
       this.loading_fetch = false;
@@ -160,8 +175,10 @@ export default class UpdateItem extends Vue {
       page: null,
       type: 'page',
       name: null,
+      name_en: null,
       url: null,
-      icon: null
+      icon: null,
+      page_slug: null
     };
   }
   onModalHide() {
@@ -176,13 +193,26 @@ export default class UpdateItem extends Vue {
     this.dataToPost.url = null;
   }
 
+  get selected_page(): any {
+    return this.pages.find((item: any) => item.id === this.dataToPost.page);
+  }
+
+  get website_url() {
+    return MainConfig.website_url;
+  }
+
   async submit() {
     try {
       this.loading_submit = true;
+      if (this.dataToPost.type === 'page') {
+        this.dataToPost.url = this.website_url + this.selected_page.slug;
+      }
+      console.log(this.dataToPost);
       await axios.put('menu/item/update/' + this.selected_menu_item, {
         page: this.dataToPost.page,
         type: this.dataToPost.type,
         name: this.dataToPost.name,
+        name_en: this.dataToPost.name_en,
         url: this.dataToPost.url,
         icon: this.dataToPost.icon
       });
