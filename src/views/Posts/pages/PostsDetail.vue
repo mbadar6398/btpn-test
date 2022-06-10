@@ -46,6 +46,17 @@
             Konfigurasi
           </div>
           <div class="card-body p-4">
+            <!-- Published date -->
+            <div class="form-group">
+              <label class="font-weight-bolder" for="">Published date :</label>
+              <date-picker
+                class="d-block w-100"
+                v-model="dataToPost.created_date"
+                value-type="format"
+                type="datetime"
+              ></date-picker>
+            </div>
+
             <!-- Visibility -->
             <div class="form-group">
               <label class="font-weight-bolder" for="">Visibility :</label>
@@ -207,6 +218,7 @@
 </template>
 
 <script lang="ts">
+import DatePicker from 'vue2-datepicker';
 import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import CategoryModal from '../components/CategoryModal.vue';
@@ -225,7 +237,8 @@ import Editor from '@tinymce/tinymce-vue';
     AddTable,
     ButtonProcess,
     SelectData,
-    UploadInput
+    UploadInput,
+    DatePicker
   },
   computed: {}
 })
@@ -253,6 +266,7 @@ export default class PostsCreate extends Vue {
     slug: '',
     tags: [],
     image: '',
+    created_date: '',
     category_id: '',
     visibility: 'Public',
     status: 'Published'
@@ -296,6 +310,7 @@ export default class PostsCreate extends Vue {
       this.dataToPost.content = detailData.content;
       this.dataToPost.visibility = detailData.visibility;
       this.dataToPost.status = detailData.status;
+      this.dataToPost.created_date = detailData.created_date;
       this.dataToPost.category_id =
         detailData.category_id === null ? '' : detailData.category_id;
       this.dataToPost.image = detailData.featured_img;

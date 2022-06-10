@@ -52,7 +52,7 @@
             <div class="col-12">
               <div class="text-center">
                 <p class="text-dark-50 font-weight-bolder mb-0">
-                  © 2021, Designed with love by Sofensys
+                  © 2022, Bankmas
                 </p>
               </div>
             </div>

@@ -43,7 +43,10 @@
       </span>
       <span class="posts-list__info">
         <i class="la la-calendar posts-list__info__icon mr-1"></i>
-        <span class="posts-list__info__text" v-text="data.created_date" />
+        <span
+          class="posts-list__info__text"
+          v-text="moment(data.created_date).format('YYYY-MM-DD LT')"
+        />
       </span>
     </div>
   </div>

@@ -5,7 +5,7 @@
         <img
           class="img-fluid"
           :src="settings.logo_white"
-          style="height: 62px;"
+          style="height: 32px;"
           alt=""
         />
       </div>
@@ -152,22 +152,22 @@ export default class Sidebar extends Vue {
       has_child: false,
       children: []
     },
-    {
-      name: 'Plugins',
-      slug: 'plugins',
-      icon: 'la la-plug',
-      is_active: false,
-      has_child: true,
-      children: [
-        {
-          name: 'Datatable',
-          slug: 'datatable',
-          has_child: false,
-          is_active: false,
-          children: []
-        }
-      ]
-    },
+    // {
+    //   name: 'Plugins',
+    //   slug: 'plugins',
+    //   icon: 'la la-plug',
+    //   is_active: false,
+    //   has_child: true,
+    //   children: [
+    //     {
+    //       name: 'Datatable',
+    //       slug: 'datatable',
+    //       has_child: false,
+    //       is_active: false,
+    //       children: []
+    //     }
+    //   ]
+    // },
     // {
     //   name: 'Informasi',
     //   slug: 'informasi',

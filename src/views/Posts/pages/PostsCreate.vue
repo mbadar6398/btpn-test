@@ -46,6 +46,17 @@
             Konfigurasi
           </div>
           <div class="card-body p-4">
+            <!-- Published date -->
+            <div class="form-group">
+              <label class="font-weight-bolder" for="">Published date :</label>
+              <date-picker
+                class="d-block w-100"
+                v-model="dataToPost.created_date"
+                value-type="format"
+                type="datetime"
+              ></date-picker>
+            </div>
+
             <!-- Visibility -->
             <div class="form-group">
               <label class="font-weight-bolder" for="">Visibility :</label>
@@ -57,7 +68,6 @@
                 <option value="Private">Private</option>
               </select>
             </div>
-
             <!-- Status -->
             <div class="form-group">
               <label class="font-weight-bolder" for="">Status :</label>
@@ -68,12 +78,6 @@
                 <option value="Published">Published</option>
                 <option value="Draft">Draft</option>
               </select>
-            </div>
-
-            <!-- Status -->
-            <div class="form-group">
-              <label class="font-weight-bolder" for="">Published Date :</label>
-              <input type="date" class="form-control form-control-solid" />
             </div>
 
             <!-- Category -->
@@ -203,6 +207,7 @@
 </template>
 
 <script lang="ts">
+import DatePicker from 'vue2-datepicker';
 import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import CategoryModal from '../components/CategoryModal.vue';
@@ -211,6 +216,7 @@ import SelectData from '@/components/SelectData.vue';
 import UploadInput from '@/components/UploadInput/UploadInput.vue';
 import AddTable from '../components/AddTable.vue';
 import MainConfig from '@/config/config';
+import moment from 'moment';
 
 import Editor from '@tinymce/tinymce-vue';
 
@@ -221,7 +227,8 @@ import Editor from '@tinymce/tinymce-vue';
     AddTable,
     ButtonProcess,
     SelectData,
-    UploadInput
+    UploadInput,
+    DatePicker
   },
   computed: {}
 })
@@ -248,6 +255,7 @@ export default class PostsCreate extends Vue {
     tags: [],
     image: '',
     category_id: '',
+    created_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
     visibility: 'Public',
     status: 'Published'
   };
@@ -307,7 +315,7 @@ export default class PostsCreate extends Vue {
       this.dataToPost.slug = this.convertToSlug(this.dataToPost.slug);
     }
     try {
-      const { data } = await axios.post('/posts/create-posts', this.dataToPost);
+      const { data } = await axios.post('/posts/create-post', this.dataToPost);
       this.savePostLoading = false;
       this.$router.push({ path: '/posts/get/' + data.data });
     } catch (error) {
