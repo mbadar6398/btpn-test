@@ -4,15 +4,8 @@
       <form novalidate @submit.prevent="handleSubmit(onSubmit)">
         <!-- Header -->
         <div class="mb-10 pt-lg-0 pt-5 text-center">
-          <!-- <img height="72" class="mb-8" src="/media/logo-dark.png" alt="" /> -->
-          <!-- <img
-            height="38"
-            class="d-block d-lg-none mb-8"
-            src="/media/logo/logo-horizontal-dark.png"
-            alt=""
-          /> -->
           <h3 class="font-weight-bolder text-dark font-size-h3 font-size-h2-lg">
-            Content Management System
+            Login Application with VueJS
           </h3>
           <span
             class="text-dark-50 font-weight-bold font-size-h5 font-size-h4-lg"
@@ -104,14 +97,6 @@
         <div
           class="form-group d-flex justify-content-between align-items-center"
         >
-          <!-- <a
-            id="kt_login_forgot"
-            href="javascript:;"
-            class="text-primary font-size-h5 font-weight-bolder"
-            @click="$emit('changePage', 'forgot-password')"
-          >
-            Forgot Password ?
-          </a> -->
           <button
             id="kt_login_signin_submit"
             type="submit"
@@ -132,20 +117,6 @@
             </div>
           </button>
         </div>
-        <!-- <div class="text-center mb-8">
-          <p class="text-dark font-size-h5 font-weight-bolder">
-            Don't have account yet ?
-            <a
-              href="javascript:;"
-              @click="$emit('changePage', 'signup')"
-              class="text-primary"
-            >
-              Request Here
-            </a>
-          </p>
-        </div> -->
-
-        <!-- Footer End -->
       </form>
     </ValidationObserver>
   </div>
@@ -153,13 +124,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { UserInterface } from '@/interfaces/user.js';
 import { extend } from 'vee-validate';
 import { email, required } from 'vee-validate/dist/rules';
 import '@/assets/sass/pages/auth/auth.scss';
 extend('email', email);
 extend('required', required);
-import axios from 'axios';
 
 @Component({
   components: {}
@@ -171,36 +140,28 @@ export default class Signin extends Vue {
   email = '';
   password = '';
 
-  get userInfo(): UserInterface {
-    return this.$store.getters['user/user_info'];
-  }
-
-  get loginStatus(): boolean {
-    return this.$store.getters['user/login_status'];
-  }
-
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.failed = false;
     this.loading = true;
     this.success = false;
-    this.$store
-      .dispatch('user/SIGN_IN', {
-        email: this.email,
-        password: this.password
-      })
-      .then((data) => {
-        this.failed = false;
-        this.success = true;
-        setTimeout(() => {
-          this.$store.dispatch('user/SUCCESS_LOGIN', data.data.data);
-          axios.defaults.headers.common.Authorization = `${data.data.data.user[0].token}`;
-          this.$router.push('posts');
-        }, 2000);
-      })
-      .catch(() => {
-        this.failed = true;
+
+    // Timeout is only to simulate loading
+    setTimeout(async () => {
+      try {
+        await this.$store.dispatch('user/SIGN_IN', {
+          email: this.email,
+          password: this.password
+        });
         this.loading = false;
-      });
+        this.success = true;
+        this.failed = false;
+        this.$router.push('/home');
+      } catch (error) {
+        this.loading = false;
+        this.success = false;
+        this.failed = true;
+      }
+    }, 1000);
   }
 }
 </script>
